@@ -42,8 +42,19 @@ export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [isBypass, setIsBypass] = useState(false);
 
   useEffect(() => {
+    // Check for bypass first
+    if (sessionStorage.getItem('bypass-auth') === 'true') {
+        setIsBypass(true);
+        if (!content) {
+          getContent().then(fetchedContent => setContent(fetchedContent));
+        }
+        setLoading(false);
+        return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser && currentUser.email && allowedEmails.includes(currentUser.email)) {
         setUser(currentUser);
@@ -61,11 +72,16 @@ export default function AdminPage() {
   }, [router, content]);
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      router.push('/login');
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
+    if (isBypass) {
+        sessionStorage.removeItem('bypass-auth');
+        router.push('/login');
+    } else {
+        try {
+          await signOut(auth);
+          router.push('/login');
+        } catch (error) {
+          console.error("Erreur lors de la déconnexion:", error);
+        }
     }
   };
 
