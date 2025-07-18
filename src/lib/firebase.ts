@@ -11,7 +11,7 @@ import { getStorage } from "firebase/storage";
 // correctement chargée et utilisée par l'application.
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDFCCI1E_N1x-UJeh4TeBC7_lv1MmiLgaw",
+  apiKey: "AIzaSyDFcCI1E_N1x-UJeh4TeBC7_lv1MmiLgaw",
   authDomain: "les-trucs-de-mumu-g9rzm.firebaseapp.com",
   projectId: "les-trucs-de-mumu-g9rzm",
   storageBucket: "les-trucs-de-mumu-g9rzm.appspot.com",
