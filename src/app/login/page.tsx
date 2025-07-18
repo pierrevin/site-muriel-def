@@ -60,7 +60,6 @@ export default function LoginPage() {
         }
         // --- End Bypass Logic ---
         
-        // This check is redundant if you also check on the server, but good for UX
         if (!allowedEmails.includes(email)) {
             toast({
                 variant: 'destructive',
@@ -77,14 +76,13 @@ export default function LoginPage() {
                 title: 'Connexion réussie',
                 description: 'Redirection vers le panneau d\'administration...',
             });
-            // Redirection handled by onAuthStateChanged
         } catch (error: any) {
             console.error("Erreur lors de la connexion :", error);
             let description = "Une erreur est survenue lors de la tentative de connexion.";
              if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect.";
             } else if (error.code === 'auth/api-key-not-valid') {
-                description = "La configuration de l'application est incorrecte. Vérifiez les variables d'environnement sur votre hébergement et rechargez le serveur.";
+                description = "La configuration de l'application est incorrecte. Avez-vous bien redémarré le serveur (npm run dev) après avoir modifié le fichier .env.local ?";
             }
             toast({
                 variant: 'destructive',
@@ -158,5 +156,3 @@ export default function LoginPage() {
         </div>
     );
 }
-
-    

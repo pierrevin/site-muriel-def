@@ -94,7 +94,7 @@ export default function AdminPage() {
   };
 
 
-  if (loading || (!content && !isBypass)) {
+  if (loading) {
     return (
        <div className="flex h-screen items-center justify-center bg-secondary">
           <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
@@ -132,5 +132,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-    
