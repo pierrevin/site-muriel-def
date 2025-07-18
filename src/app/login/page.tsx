@@ -80,7 +80,7 @@ export default function LoginPage() {
             console.error("Erreur lors de la connexion :", error);
             let description = "Une erreur est survenue lors de la tentative de connexion.";
             if (error.code === 'auth/api-key-not-valid') {
-                description = "La configuration Firebase est incorrecte ou manquante. Vérifiez vos variables d'environnement en production et redéployez le site.";
+                description = "La configuration Firebase est incorrecte ou manquante. Vérifiez vos variables d'environnement et redémarrez le serveur.";
             } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect.";
             }
@@ -103,7 +103,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex h-screen items-center justify-center bg-secondary p-4">
+        <div className="flex h-screen items-center justify-center bg-background p-4">
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
                     <CardTitle className="font-headline text-2xl">Accès à l'espace d'administration</CardTitle>

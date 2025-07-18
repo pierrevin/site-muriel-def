@@ -11,25 +11,31 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Vérification cruciale pour le débogage.
-// Si ce message apparaît dans la console du navigateur,
-// cela signifie que les variables d'environnement ne sont pas chargées.
-if (typeof window !== 'undefined' && !firebaseConfig.apiKey) {
-    console.error(`
-      ============================================================
-      ERREUR CRITIQUE: Configuration Firebase incomplète.
-      Les variables d'environnement (NEXT_PUBLIC_FIREBASE_...) ne sont pas
-      accessibles par le navigateur.
+// Vérification cruciale pour le débogage côté client (navigateur).
+if (typeof window !== 'undefined') {
+    if (!firebaseConfig.apiKey) {
+        console.error(`
+          ============================================================
+          ERREUR CRITIQUE: Clé API Firebase non détectée !
+          La variable NEXT_PUBLIC_FIREBASE_API_KEY est manquante ou vide.
 
-      Actions à vérifier:
-      1. Fichier .env.local: Existe-t-il à la racine ? Est-il correctement rempli ?
-      2. Serveur de développement: Avez-vous redémarré le serveur ('npm run dev')
-         après avoir créé ou modifié le fichier .env.local ?
-      3. Déploiement: Avez-vous configuré les "secrets" dans les paramètres
-         de votre backend sur Firebase App Hosting ? Avez-vous redéployé
-         le site APRES avoir ajouté ces secrets ?
-      ============================================================
-    `);
+          CAUSE POSSIBLE :
+          Le serveur de développement n'a pas été redémarré après la modification
+          du fichier .env.local.
+
+          ACTION REQUISE :
+          1. Arrêtez le serveur (Ctrl+C).
+          2. Relancez-le avec "npm run dev".
+          
+          Pour la production : vérifiez que les secrets sont configurés sur
+          votre plateforme d'hébergement (Firebase App Hosting, Vercel...).
+          ============================================================
+        `);
+    } else {
+         // Débogage pour confirmer que la clé est bien chargée.
+         // Cette ligne peut être supprimée une fois le problème résolu.
+        console.log("✅ Configuration Firebase chargée. Clé API détectée.");
+    }
 }
 
 
