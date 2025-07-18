@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { AdminEditor } from './editor';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/firebase/firebaseClient';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { LoaderCircle, LogOut, Home, AlertTriangle } from 'lucide-react';

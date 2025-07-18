@@ -1,7 +1,7 @@
 
 'use client';
 
-import { auth } from '@/lib/firebase';
+import { auth } from '@/firebase/firebaseClient';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

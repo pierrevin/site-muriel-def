@@ -3,7 +3,7 @@
 
 import { useState, useRef, ChangeEvent, useId, useEffect } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { auth, storage } from '@/lib/firebase';
+import { auth, storage } from '@/firebase/firebaseClient';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
