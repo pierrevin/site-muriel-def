@@ -41,9 +41,24 @@ export default function AdminPage() {
   const [content, setContent] = useState<any | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isBypass, setIsBypass] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    // Bypass Logic
+    if (sessionStorage.getItem('bypass_session') === 'true') {
+        setIsBypass(true);
+        if (!content) {
+          (async () => {
+            const fetchedContent = await getContent();
+            setContent(fetchedContent);
+            setLoading(false);
+          })();
+        }
+        return;
+    }
+
+    // Firebase Auth Logic
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser && currentUser.email && allowedEmails.includes(currentUser.email)) {
         setUser(currentUser);
@@ -61,6 +76,14 @@ export default function AdminPage() {
   }, [router, content]);
 
   const handleLogout = async () => {
+    // Clear bypass session on logout
+    if (isBypass) {
+        sessionStorage.removeItem('bypass_session');
+        router.push('/login');
+        return;
+    }
+    
+    // Firebase logout
     try {
       await signOut(auth);
       router.push('/login');
@@ -95,6 +118,15 @@ export default function AdminPage() {
            </Button>
         </div>
       </div>
+       {isBypass && (
+          <Alert variant="destructive" className="mb-6">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Mode de Secours Actif</AlertTitle>
+              <AlertDescription>
+                  Vous êtes connecté en mode de secours. La connexion normale via Firebase a échoué.
+              </AlertDescription>
+          </Alert>
+      )}
       <AdminEditor initialContent={content} />
     </div>
   );

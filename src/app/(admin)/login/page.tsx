@@ -22,6 +22,10 @@ export default function LoginPage() {
     const router = useRouter();
     const { toast } = useToast();
 
+    // Bypass credentials
+    const BYPASS_USER = 'bypass@studio.dev';
+    const BYPASS_PASS = 'bypass';
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user && user.email && allowedEmails.includes(user.email)) {
@@ -30,12 +34,32 @@ export default function LoginPage() {
                 setLoading(false);
             }
         });
+
+        // Check for bypass session
+        if (sessionStorage.getItem('bypass_session') === 'true') {
+             router.push('/admin');
+        } else {
+             setLoading(false);
+        }
+
         return () => unsubscribe();
     }, [router]);
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setAuthLoading(true);
+
+        // --- Bypass Logic ---
+        if (email === BYPASS_USER && password === BYPASS_PASS) {
+            sessionStorage.setItem('bypass_session', 'true');
+            toast({
+                title: 'Connexion de secours réussie',
+                description: 'Redirection vers le panneau d\'administration...',
+            });
+            router.push('/admin');
+            return; 
+        }
+        // --- End Bypass Logic ---
 
         if (!allowedEmails.includes(email)) {
             toast({
@@ -53,17 +77,17 @@ export default function LoginPage() {
                 title: 'Connexion réussie',
                 description: 'Redirection vers le panneau d\'administration...',
             });
-            // Redirection gérée par onAuthStateChanged
+            // Redirection handled by onAuthStateChanged
         } catch (error: any) {
             console.error("Erreur lors de la connexion :", error);
             let description = "Une erreur est survenue lors de la tentative de connexion.";
-            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                description = "L'adresse e-mail ou le mot de passe est incorrect. Veuillez réessayer.";
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/api-key-not-valid') {
+                description = "L'authentification a échoué. Vérifiez vos identifiants ou la configuration de l'application.";
             }
             toast({
                 variant: 'destructive',
                 title: 'Erreur de connexion',
-                description: description,
+                description: `${description} (Code: ${error.code})`,
             });
         } finally {
             setAuthLoading(false);
