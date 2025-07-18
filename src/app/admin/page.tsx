@@ -46,7 +46,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Bypass Logic
+    // Logic for bypass session
     if (typeof window !== 'undefined' && sessionStorage.getItem('bypass_session') === 'true') {
         setIsBypass(true);
         if (!content) {
@@ -55,6 +55,8 @@ export default function AdminPage() {
             setContent(fetchedContent);
             setLoading(false);
           })();
+        } else {
+            setLoading(false);
         }
         return;
     }
@@ -92,7 +94,6 @@ export default function AdminPage() {
       console.error("Erreur lors de la déconnexion:", error);
     }
   };
-
 
   if (loading) {
     return (
