@@ -1,5 +1,4 @@
 
-
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
@@ -19,9 +18,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Vérification que toutes les variables sont bien présentes
-if (!firebaseConfig.apiKey || !firebaseConfig.authDomain) {
-    console.error("Les variables d'environnement Firebase (NEXT_PUBLIC_*) ne sont pas correctement configurées.");
+// Vérification que toutes les variables sont bien présentes COTE CLIENT
+// Cette vérification est cruciale pour le débogage en production.
+if (typeof window !== 'undefined' && !firebaseConfig.apiKey) {
+    console.error(`
+      ============================================================
+      ERREUR CRITIQUE: Configuration Firebase incomplète.
+      La variable NEXT_PUBLIC_FIREBASE_API_KEY n'est pas définie.
+
+      Actions possibles:
+      1. Localement: Avez-vous un fichier .env.local avec les bonnes clés ?
+         Avez-vous redémarré le serveur ('npm run dev') après modification ?
+      2. En Production (Firebase App Hosting): Avez-vous ajouté les
+         variables secrètes dans les paramètres de votre backend ?
+         Avez-vous redéployé votre site APRES avoir ajouté les secrets ?
+      ============================================================
+    `);
 }
 
 
@@ -29,5 +41,3 @@ if (!firebaseConfig.apiKey || !firebaseConfig.authDomain) {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const storage = getStorage(app);
-
-    
