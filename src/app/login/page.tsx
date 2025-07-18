@@ -84,7 +84,7 @@ export default function LoginPage() {
              if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect.";
             } else if (error.code === 'auth/api-key-not-valid') {
-                description = "La configuration de l'application est incorrecte. Les clés d'API sont manquantes ou invalides.";
+                description = "La configuration de l'application est incorrecte. Vérifiez les variables d'environnement sur votre hébergement et rechargez le serveur.";
             }
             toast({
                 variant: 'destructive',
