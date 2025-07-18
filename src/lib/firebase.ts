@@ -4,20 +4,24 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 // ====================================================================================
-// Configuration Firebase
+// Configuration Firebase sécurisée avec des variables d'environnement
 // ====================================================================================
-
-// La configuration est directement intégrée ici pour garantir qu'elle est
-// correctement chargée et utilisée par l'application.
+// Pour des raisons de sécurité, les clés API ne sont plus stockées
+// directement dans le code. Elles sont chargées depuis les variables d'environnement.
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDFcCI1E_N1x-UJeh4TeBC7_lv1MmiLgaw",
-  authDomain: "les-trucs-de-mumu-g9rzm.firebaseapp.com",
-  projectId: "les-trucs-de-mumu-g9rzm",
-  storageBucket: "les-trucs-de-mumu-g9rzm.appspot.com",
-  messagingSenderId: "59124662320",
-  appId: "1:59124662320:web:d25a2e57c66935b0b2e2d9"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
+
+// Vérification que toutes les variables sont bien présentes
+if (!firebaseConfig.apiKey || !firebaseConfig.authDomain) {
+    console.error("Les variables d'environnement Firebase ne sont pas correctement configurées. Veuillez vérifier votre fichier .env.local");
+}
 
 
 // Initialiser Firebase
