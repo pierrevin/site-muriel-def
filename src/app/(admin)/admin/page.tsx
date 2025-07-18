@@ -6,10 +6,11 @@ import { AdminEditor } from './editor';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { LoaderCircle, LogOut, Home } from 'lucide-react';
+import { LoaderCircle, LogOut, Home, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { allowedEmails } from '@/lib/authorized-users';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 async function getContent() {
   const res = await fetch('/api/content', { cache: 'no-store' });
