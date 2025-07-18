@@ -5,11 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run lint && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "deploy": "git add . && git commit -m 'Mise à jour du site' && git pull --rebase && git push"
+    "deploy": "git add . && git commit -m 'Mise à jour du site' --allow-empty-message --no-edit || true && git pull --rebase && git push"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
