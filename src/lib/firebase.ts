@@ -6,8 +6,8 @@ import { getStorage } from "firebase/storage";
 // ====================================================================================
 // Configuration Firebase sécurisée avec des variables d'environnement
 // ====================================================================================
-// Pour des raisons de sécurité, les clés API ne sont plus stockées
-// directement dans le code. Elles sont chargées depuis les variables d'environnement.
+// Les clés sont chargées depuis les variables d'environnement.
+// Pour être accessibles côté client, elles doivent être préfixées par NEXT_PUBLIC_.
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 // Vérification que toutes les variables sont bien présentes
 if (!firebaseConfig.apiKey || !firebaseConfig.authDomain) {
-    console.error("Les variables d'environnement Firebase ne sont pas correctement configurées. Veuillez vérifier votre fichier .env.local");
+    console.error("Les variables d'environnement Firebase (NEXT_PUBLIC_*) ne sont pas correctement configurées.");
 }
 
 
