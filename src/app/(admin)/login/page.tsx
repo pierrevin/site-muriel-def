@@ -22,15 +22,9 @@ export default function LoginPage() {
     const router = useRouter();
     const { toast } = useToast();
 
-    // Bypass credentials
-    const BYPASS_EMAIL = 'bypass@studio.dev';
-    const BYPASS_PASSWORD = 'bypass';
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (sessionStorage.getItem('bypass-auth') === 'true') {
-                 router.push('/admin');
-            } else if (user && user.email && allowedEmails.includes(user.email)) {
+            if (user && user.email && allowedEmails.includes(user.email)) {
                 router.push('/admin');
             } else {
                 setLoading(false);
@@ -42,14 +36,6 @@ export default function LoginPage() {
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setAuthLoading(true);
-
-        // Bypass logic
-        if (email === BYPASS_EMAIL && password === BYPASS_PASSWORD) {
-            sessionStorage.setItem('bypass-auth', 'true');
-            toast({ title: 'Connexion de secours réussie', description: 'Redirection...' });
-            router.push('/admin');
-            return;
-        }
 
         if (!allowedEmails.includes(email)) {
             toast({
@@ -73,8 +59,6 @@ export default function LoginPage() {
             let description = "Une erreur est survenue lors de la tentative de connexion.";
             if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect. Veuillez réessayer.";
-            } else if (error.code === 'auth/api-key-not-valid') {
-                description = "La clé API Firebase n'est pas valide. Veuillez utiliser les identifiants de secours.";
             }
             toast({
                 variant: 'destructive',
@@ -137,17 +121,6 @@ export default function LoginPage() {
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter>
-                    <Alert variant="destructive" className="w-full">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>Connexion de secours</AlertTitle>
-                        <AlertDescription className="text-xs">
-                           En cas de problème, utilisez :<br />
-                           Email: <strong>{BYPASS_EMAIL}</strong><br />
-                           Mot de passe: <strong>{BYPASS_PASSWORD}</strong>
-                        </AlertDescription>
-                    </Alert>
-                </CardFooter>
             </Card>
         </div>
     );
