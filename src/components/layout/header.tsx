@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu } from 'lucide-react';
+import { Menu, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -58,6 +58,12 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                 {link.label}
                 </Link>
             ))}
+             <Button variant="ghost" size="sm" asChild>
+                <Link href="/admin">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Admin
+                </Link>
+              </Button>
             </nav>
 
             <div className="md:hidden">
@@ -81,6 +87,13 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                             </Link>
                             </SheetClose>
                         ))}
+                         <Separator className="my-2"/>
+                         <SheetClose asChild>
+                            <Link href="/admin" className="flex items-center px-4 py-2 text-foreground/80 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
+                               <Shield className="mr-2 h-4 w-4" />
+                               Admin
+                            </Link>
+                         </SheetClose>
                         </nav>
                     </SheetContent>
                 </Sheet>
