@@ -3,14 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import { AdminEditor } from './editor';
-import { auth } from '@/firebase/firebaseClient';
-import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { LoaderCircle, LogOut, Home, AlertTriangle } from 'lucide-react';
+import { LoaderCircle, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { allowedEmails } from '@/lib/authorized-users';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 async function getContent() {
   const res = await fetch('/api/content', { cache: 'no-store' });
@@ -40,60 +35,18 @@ async function getContent() {
 
 export default function AdminPage() {
   const [content, setContent] = useState<any | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isBypass, setIsBypass] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
-    // Logic for bypass session
-    if (typeof window !== 'undefined' && sessionStorage.getItem('bypass_session') === 'true') {
-        setIsBypass(true);
-        if (!content) {
-          (async () => {
-            const fetchedContent = await getContent();
-            setContent(fetchedContent);
-            setLoading(false);
-          })();
-        } else {
-            setLoading(false);
-        }
-        return;
-    }
+    const fetchContent = async () => {
+      const fetchedContent = await getContent();
+      setContent(fetchedContent);
+      setLoading(false);
+    };
 
-    // Firebase Auth Logic
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser && currentUser.email && allowedEmails.includes(currentUser.email)) {
-        setUser(currentUser);
-        if (!content) {
-          const fetchedContent = await getContent();
-          setContent(fetchedContent);
-        }
-        setLoading(false);
-      } else {
-        router.push('/login');
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router, content]);
-
-  const handleLogout = async () => {
-    // Clear bypass session on logout
-    if (isBypass) {
-        sessionStorage.removeItem('bypass_session');
-        router.push('/login');
-        return;
-    }
-    
-    // Firebase logout
-    try {
-      await signOut(auth);
-      router.push('/login');
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
-    }
-  };
+    fetchContent();
+  }, []);
+  
 
   if (loading) {
     return (
@@ -114,21 +67,8 @@ export default function AdminPage() {
                 Retour au site
               </Link>
            </Button>
-           <Button variant="ghost" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Se déconnecter
-           </Button>
         </div>
       </div>
-       {isBypass && (
-          <Alert variant="destructive" className="mb-6">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Mode de Secours Actif</AlertTitle>
-              <AlertDescription>
-                  Vous êtes connecté en mode de secours. La connexion normale via Firebase a échoué.
-              </AlertDescription>
-          </Alert>
-      )}
       {content && <AdminEditor initialContent={content} />}
     </div>
   );

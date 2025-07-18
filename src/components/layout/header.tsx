@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, User } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -60,14 +60,6 @@ const Header = ({ generalContent }: { generalContent: any }) => {
             ))}
             </nav>
 
-            <div className="hidden md:block h-6 border-l border-border/60 mx-4"></div>
-
-            <Link href="/login" aria-label="Accès administrateur" className="hidden md:block">
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                    <User className="h-5 w-5 text-foreground/80" />
-                </Button>
-            </Link>
-
             <div className="md:hidden">
                 <Sheet>
                     <SheetTrigger asChild>
@@ -89,15 +81,6 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                             </Link>
                             </SheetClose>
                         ))}
-                         <div className="pt-4 pb-2">
-                            <Separator />
-                         </div>
-                        <SheetClose asChild>
-                            <Link href="/login" className="flex items-center gap-2 px-4 py-2 text-foreground/70 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
-                                <User className="h-4 w-4" />
-                                <span>Connexion</span>
-                            </Link>
-                        </SheetClose>
                         </nav>
                     </SheetContent>
                 </Sheet>

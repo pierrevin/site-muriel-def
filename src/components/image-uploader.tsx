@@ -3,7 +3,7 @@
 
 import { useState, useRef, ChangeEvent, useId, useEffect } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { auth, storage } from '@/firebase/firebaseClient';
+import { storage } from '@/firebase/firebaseClient';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -124,18 +124,10 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
     setError(null);
     setUploadSuccess(false);
     setIsUploading(true);
-
-    const user = auth.currentUser;
-
-    if (!user) {
-      const authError = "Erreur: Utilisateur non connecté. Veuillez rafraîchir la page et vous reconnecter.";
-      setError(authError);
-      setIsUploading(false);
-      return;
-    }
-
+    
+    // Using a simpler path for public access
     const finalFileName = fileName || (fileToUpload instanceof File ? fileToUpload.name : 'cropped-image.webp');
-    const storageRef = ref(storage, `${folder}/${user.uid}/${Date.now()}-${finalFileName}`);
+    const storageRef = ref(storage, `${folder}/${Date.now()}-${finalFileName}`);
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
     uploadTask.on('state_changed',
@@ -148,7 +140,7 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
         let friendlyError = "Échec de l'upload.";
         switch (err.code) {
           case 'storage/unauthorized':
-            friendlyError = "Erreur de permission: L'utilisateur n'est pas autorisé. Vérifiez les règles de sécurité de votre Storage Firebase et assurez-vous d'être bien connecté.";
+            friendlyError = "Erreur de permission: Vérifiez les règles de sécurité de votre Storage Firebase.";
             break;
           case 'storage/canceled':
             friendlyError = "L'upload a été annulé.";
