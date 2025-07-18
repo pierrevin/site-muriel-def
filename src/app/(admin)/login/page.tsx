@@ -27,6 +27,12 @@ export default function LoginPage() {
     const BYPASS_PASS = 'bypass';
 
     useEffect(() => {
+        // Check for bypass session first
+        if (sessionStorage.getItem('bypass_session') === 'true') {
+             router.push('/admin');
+             return; // Important to stop execution
+        }
+
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user && user.email && allowedEmails.includes(user.email)) {
                 router.push('/admin');
@@ -34,13 +40,6 @@ export default function LoginPage() {
                 setLoading(false);
             }
         });
-
-        // Check for bypass session
-        if (sessionStorage.getItem('bypass_session') === 'true') {
-             router.push('/admin');
-        } else {
-             setLoading(false);
-        }
 
         return () => unsubscribe();
     }, [router]);
@@ -60,7 +59,8 @@ export default function LoginPage() {
             return; 
         }
         // --- End Bypass Logic ---
-
+        
+        // This check is redundant if you also check on the server, but good for UX
         if (!allowedEmails.includes(email)) {
             toast({
                 variant: 'destructive',
@@ -81,8 +81,10 @@ export default function LoginPage() {
         } catch (error: any) {
             console.error("Erreur lors de la connexion :", error);
             let description = "Une erreur est survenue lors de la tentative de connexion.";
-            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/api-key-not-valid') {
-                description = "L'authentification a échoué. Vérifiez vos identifiants ou la configuration de l'application.";
+             if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                description = "L'adresse e-mail ou le mot de passe est incorrect.";
+            } else if (error.code === 'auth/api-key-not-valid') {
+                description = "La configuration de l'application est incorrecte. Les clés d'API sont manquantes ou invalides.";
             }
             toast({
                 variant: 'destructive',
@@ -110,6 +112,13 @@ export default function LoginPage() {
                     <CardDescription>Veuillez vous connecter pour continuer.</CardDescription>
                 </CardHeader>
                 <CardContent>
+                     <Alert className="mb-4 bg-muted/50 border-primary/20">
+                        <AlertTriangle className="h-4 w-4 text-accent" />
+                        <AlertTitle className="text-foreground">Connexion de secours</AlertTitle>
+                        <AlertDescription>
+                           En cas de problème, utilisez `bypass@studio.dev` avec le mot de passe `bypass`.
+                        </AlertDescription>
+                    </Alert>
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>

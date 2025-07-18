@@ -67,10 +67,10 @@ export default function AdminPage() {
           const fetchedContent = await getContent();
           setContent(fetchedContent);
         }
+        setLoading(false);
       } else {
         router.push('/login');
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -94,7 +94,7 @@ export default function AdminPage() {
   };
 
 
-  if (loading || !content) {
+  if (loading || (!content && !isBypass)) {
     return (
        <div className="flex h-screen items-center justify-center bg-secondary">
           <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
@@ -128,7 +128,7 @@ export default function AdminPage() {
               </AlertDescription>
           </Alert>
       )}
-      <AdminEditor initialContent={content} />
+      {content && <AdminEditor initialContent={content} />}
     </div>
   );
 }
