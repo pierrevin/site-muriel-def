@@ -15,13 +15,6 @@ import { allowedEmails } from '@/lib/authorized-users';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 
-// ==============================================================================
-// SOLUTION DE CONTOURNEMENT POUR ACCÈS IMMÉDIAT
-// ==============================================================================
-const BYPASS_EMAIL = "bypass@studio.dev";
-const BYPASS_PASSWORD = "bypass";
-
-
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,11 +25,6 @@ export default function LoginPage() {
 
     // Vérifie si un utilisateur est déjà connecté et autorisé
     useEffect(() => {
-        if (sessionStorage.getItem('bypass-auth') === 'true') {
-            router.push('/admin');
-            return;
-        }
-
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user && user.email && allowedEmails.includes(user.email)) {
                 router.push('/admin');
@@ -50,17 +38,6 @@ export default function LoginPage() {
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setAuthLoading(true);
-
-        if (email === BYPASS_EMAIL && password === BYPASS_PASSWORD) {
-            sessionStorage.setItem('bypass-auth', 'true');
-            toast({
-                title: 'Accès administrateur activé',
-                description: 'Redirection vers le panneau d\'administration...',
-            });
-            router.push('/admin');
-            return;
-        }
-
 
         if (!allowedEmails.includes(email)) {
             toast({
@@ -78,13 +55,14 @@ export default function LoginPage() {
                 title: 'Connexion réussie',
                 description: 'Redirection vers le panneau d\'administration...',
             });
+            // La redirection est gérée par le useEffect onAuthStateChanged
         } catch (error: any) {
             console.error("Erreur lors de la connexion :", error);
             let description = "Une erreur est survenue lors de la tentative de connexion.";
             if (error.code === 'auth/invalid-credential') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect. Veuillez réessayer.";
             } else if (error.code === 'auth/api-key-not-valid') {
-                description = "La clé API Firebase n'est pas valide. Utilisez les identifiants de contournement.";
+                description = "La clé API Firebase n'est pas valide. Contactez le développeur pour vérifier la configuration.";
             }
             toast({
                 variant: 'destructive',
@@ -147,19 +125,6 @@ export default function LoginPage() {
                         </Button>
                     </form>
                 </CardContent>
-                 <CardFooter>
-                    <Alert variant="default" className="border-accent text-accent-foreground">
-                        <AlertTriangle className="h-4 w-4 !text-accent" />
-                        <AlertTitle>Accès direct</AlertTitle>
-                        <AlertDescription>
-                            Si l'authentification Firebase échoue, utilisez ces identifiants pour un accès immédiat :
-                            <br />
-                            <strong>Email:</strong> bypass@studio.dev
-                            <br />
-                            <strong>Passe:</strong> bypass
-                        </AlertDescription>
-                    </Alert>
-                </CardFooter>
             </Card>
         </div>
     );

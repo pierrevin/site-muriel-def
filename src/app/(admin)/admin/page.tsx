@@ -39,25 +39,11 @@ async function getContent() {
 
 export default function AdminPage() {
   const [content, setContent] = useState<any | null>(null);
-  const [user, setUser] = useState<User | null | 'bypass'>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    // Vérification de la connexion simulée en premier
-    if (sessionStorage.getItem('bypass-auth') === 'true') {
-        setUser('bypass');
-        const loadContent = async () => {
-          if (!content) {
-            const fetchedContent = await getContent();
-            setContent(fetchedContent);
-          }
-          setLoading(false);
-        };
-        loadContent();
-        return;
-    }
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser && currentUser.email && allowedEmails.includes(currentUser.email)) {
         setUser(currentUser);
@@ -75,13 +61,6 @@ export default function AdminPage() {
   }, [router, content]);
 
   const handleLogout = async () => {
-    // Gestion de la déconnexion simulée
-    if (sessionStorage.getItem('bypass-auth') === 'true') {
-        sessionStorage.removeItem('bypass-auth');
-        router.push('/login');
-        return;
-    }
-
     try {
       await signOut(auth);
       router.push('/login');
