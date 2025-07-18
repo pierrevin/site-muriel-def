@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         // Check for bypass session first
-        if (sessionStorage.getItem('bypass_session') === 'true') {
+        if (typeof window !== 'undefined' && sessionStorage.getItem('bypass_session') === 'true') {
              router.push('/admin');
              return; // Important to stop execution
         }
@@ -82,12 +82,12 @@ export default function LoginPage() {
              if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                 description = "L'adresse e-mail ou le mot de passe est incorrect.";
             } else if (error.code === 'auth/api-key-not-valid') {
-                description = "La configuration de l'application est incorrecte. Avez-vous bien redémarré le serveur (npm run dev) après avoir modifié le fichier .env.local ?";
+                description = "La configuration de l'application est incorrecte. Avez-vous bien redémarré le serveur (npm run dev) après avoir modifié le fichier .env.local et configuré les secrets en production ?";
             }
             toast({
                 variant: 'destructive',
                 title: 'Erreur de connexion',
-                description: `${description} (Code: ${error.code})`,
+                description: `${description}`,
             });
         } finally {
             setAuthLoading(false);

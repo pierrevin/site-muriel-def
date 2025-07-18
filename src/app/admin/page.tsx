@@ -47,7 +47,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Bypass Logic
-    if (sessionStorage.getItem('bypass_session') === 'true') {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('bypass_session') === 'true') {
         setIsBypass(true);
         if (!content) {
           (async () => {
