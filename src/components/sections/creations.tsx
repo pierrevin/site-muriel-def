@@ -34,6 +34,9 @@ const CreationsSection = ({ content }: { content: any }) => {
       );
   }
 
+  const allCategories = content.categories && Array.isArray(content.categories) ? content.categories : [];
+  const categories = ['Tout', ...allCategories];
+
   const filteredItems = activeCategory === 'Tout' 
     ? content.items 
     : content.items.filter((item: any) => item.category === activeCategory);
@@ -46,8 +49,6 @@ const CreationsSection = ({ content }: { content: any }) => {
     setActiveCategory(category);
     setVisibleItems(INITIAL_VISIBLE_ITEMS);
   };
-
-  const categories = ['Tout', ...content.categories];
 
   return (
     <section id="creations" className="bg-background section-padding">

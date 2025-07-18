@@ -19,8 +19,10 @@ const navLinks = [
 
 const Header = ({ generalContent }: { generalContent: any }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -28,6 +30,10 @@ const Header = ({ generalContent }: { generalContent: any }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (!isClient) {
+    return <header className="sticky top-0 z-50 w-full h-16 bg-transparent" />;
+  }
 
   return (
     <header className={cn(

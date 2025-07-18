@@ -1,7 +1,4 @@
 
-'use client';
-
-import { useState, useEffect } from 'react';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import HeroSection from '@/components/sections/hero';
@@ -10,68 +7,41 @@ import AboutSection from '@/components/sections/about';
 import CreationsSection from '@/components/sections/creations';
 import TestimonialsSection from '@/components/sections/testimonials';
 import ContactSection from '@/components/sections/contact';
-import { Skeleton } from '@/components/ui/skeleton';
-import { LoaderCircle } from 'lucide-react';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
-// Fonction pour charger le contenu depuis l'API
+// Fonction pour charger le contenu directement depuis le fichier JSON
+// C'est plus robuste et rapide côté serveur.
 async function getContent() {
   try {
-    const res = await fetch('/api/content', { 
-      cache: 'no-store' 
-    });
-
-    if (!res.ok) {
-      console.error(`Failed to fetch content: ${res.statusText}`);
-      return null;
-    }
-    
-    return await res.json();
+    const contentPath = join(process.cwd(), 'src', 'data', 'content.json');
+    const fileContent = await readFile(contentPath, 'utf-8');
+    return JSON.parse(fileContent);
   } catch (error) {
-    console.error("Failed to fetch content from API.", error);
-    return null;
+    console.error("Failed to read content.json, returning default structure.", error);
+    // Retourne une structure par défaut si le fichier n'est pas trouvé ou invalide.
+    return {
+      general: { logoUrl: '' },
+      hero: { title: 'Les Trucs de Mumu', subtitle: 'Créations artisanales', imageUrl: 'https://placehold.co/1920x1080.png' },
+      features: { title: 'Mes engagements', subtitle: 'La promesse d\'un art authentique', items: Array(3).fill({ title: 'Titre', description: 'Description' }) },
+      about: { title: 'À propos', paragraph1: '', paragraph2: '', paragraph3: '', imageUrl: 'https://placehold.co/800x1000.png' },
+      creations: { title: 'Mes créations', subtitle: 'Un aperçu de mon univers', categories: [], items: [] },
+      testimonials: { title: 'Témoignages', items: [] },
+      contact: { 
+        title: 'Parlons de votre projet', 
+        subtitle: 'Une question, une idée ? Contactez-moi.',
+        detailsTitle: 'Mes coordonnées',
+        formTitle: 'Formulaire de contact',
+        details: { phone: '', address: '' }
+      },
+    };
   }
 }
 
-const defaultContent = {
-  general: { logoUrl: '' },
-  hero: { title: 'Les Trucs de Mumu', subtitle: 'Créations artisanales', imageUrl: 'https://placehold.co/1920x1080.png' },
-  features: { title: 'Mes engagements', subtitle: 'La promesse d\'un art authentique', items: Array(3).fill({ title: 'Titre', description: 'Description' }) },
-  about: { title: 'À propos', paragraph1: '', paragraph2: '', paragraph3: '', imageUrl: 'https://placehold.co/800x1000.png' },
-  creations: { title: 'Mes créations', subtitle: 'Un aperçu de mon univers', categories: [], items: [] },
-  testimonials: { title: 'Témoignages', items: [] },
-  contact: { 
-    title: 'Parlons de votre projet', 
-    subtitle: 'Une question, une idée ? Contactez-moi.',
-    detailsTitle: 'Mes coordonnées',
-    formTitle: 'Formulaire de contact',
-    details: { phone: '', address: '' }
-  },
-};
 
-
-export default function Home() {
-  const [content, setContent] = useState<any | null>(null);
-
-  useEffect(() => {
-    const loadContent = async () => {
-      const fetchedContent = await getContent();
-      setContent(fetchedContent || defaultContent);
-    };
-
-    loadContent();
-  }, []);
-
-  if (!content) {
-    return (
-       <div className="flex flex-col min-h-screen bg-background">
-          <Header generalContent={defaultContent.general} />
-          <main className="flex-1 flex items-center justify-center">
-             <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
-          </main>
-          <Footer />
-       </div>
-    );
-  }
+// La page d'accueil est maintenant un composant serveur asynchrone.
+export default async function Home() {
+  const content = await getContent();
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
