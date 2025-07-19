@@ -17,7 +17,7 @@ const Footer = () => {
           &copy; {currentYear} Les Trucs de Mumu - Tous droits réservés.
         </p>
         <p className="text-xs mt-1">
-          Création artisanale par Muriel Fauthoux à Olonzac, France. (v4)
+          Création artisanale par Muriel Fauthoux à Olonzac, France. (v5 - Forcing refresh)
         </p>
       </div>
     </footer>

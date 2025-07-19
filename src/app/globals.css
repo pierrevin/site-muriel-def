@@ -17,8 +17,8 @@
     --popover: 20 12% 8%;
     --popover-foreground: 20 5% 95%;
 
-    /* Couleur vive (type vitrail bleu/violet) */
-    --primary: 250 60% 70%;
+    /* Couleur vive (type vitrail bleu/violet) - Légèrement modifiée pour forcer le cache */
+    --primary: 250 60% 71%;
     --primary-foreground: 20 5% 98%;
 
     /* Couleur Terre Cuite */
@@ -38,7 +38,7 @@
 
     --border: 15 20% 30%;
     --input: 15 20% 35%;
-    --ring: 250 60% 70%;
+    --ring: 250 60% 71%;
     
     --radius: 0.8rem;
     --chart-1: 12 76% 61%;
@@ -54,9 +54,7 @@
     --foreground: 20 5% 95%;
     --card: 20 12% 12%;
     --card-foreground: 20 5% 95%;
-    --popover: 20 12% 8%;
-    --popover-foreground: 20 5% 95%;
-    --primary: 250 60% 70%;
+    --primary: 250 60% 71%;
     --primary-foreground: 20 5% 98%;
     --secondary: 15 56% 55%;
     --secondary-foreground: 20 5% 98%;
@@ -68,7 +66,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 15 20% 30%;
     --input: 15 20% 35%;
-    --ring: 250 60% 70%;
+    --ring: 250 60% 71%;
   }
 }
 
