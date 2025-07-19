@@ -3,9 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import { AdminEditor } from './editor';
-import { LoaderCircle, Home } from 'lucide-react';
+import { LoaderCircle, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 async function getContent() {
   const res = await fetch('/api/content', { cache: 'no-store' });
@@ -36,6 +36,7 @@ async function getContent() {
 export default function AdminPage() {
   const [content, setContent] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -46,6 +47,11 @@ export default function AdminPage() {
 
     fetchContent();
   }, []);
+
+  const handleLogout = () => {
+    // Redirige simplement vers la page d'accueil
+    router.push('/');
+  };
   
 
   if (loading) {
@@ -61,11 +67,9 @@ export default function AdminPage() {
       <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
         <h1 className="text-4xl font-bold font-headline">Administration du site</h1>
         <div className="flex items-center gap-2">
-           <Button variant="outline" asChild>
-              <Link href="/">
-                <Home className="mr-2 h-4 w-4" />
-                Retour au site
-              </Link>
+           <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Retour au site / Déconnexion
            </Button>
         </div>
       </div>

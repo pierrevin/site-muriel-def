@@ -1,5 +1,14 @@
+
+"use client";
+
+import { useState, useEffect } from 'react';
+
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="bg-card">
@@ -8,7 +17,7 @@ const Footer = () => {
           &copy; {currentYear} Les Trucs de Mumu - Tous droits réservés.
         </p>
         <p className="text-xs mt-1">
-          Création artisanale par Muriel Fauthoux à Olonzac, France. (v2)
+          Création artisanale par Muriel Fauthoux à Olonzac, France. (v4)
         </p>
       </div>
     </footer>
