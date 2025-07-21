@@ -1,42 +1,23 @@
-// Ce fichier contient uniquement la configuration de Firebase,
-// chargée à partir des variables d'environnement.
-// C'est une bonne pratique pour séparer la configuration de l'initialisation.
+// src/firebase/firebaseConfig.ts
+
+// IMPORTANT: Ce fichier contient la configuration explicite de Firebase pour garantir
+// le fonctionnement dans tous les environnements.
+// Les clés ci-dessous sont conçues pour être publiques et ne posent pas de risque
+// de sécurité si elles sont exposées côté client. La sécurité est assurée
+// par les règles de sécurité de Firebase (Firestore Rules, Storage Rules).
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDFcCI1E_N1x-UJeh4TeBC7_lv1MmiLgaw",
+  authDomain: "les-trucs-de-mumu-g9rzm.firebaseapp.com",
+  projectId: "les-trucs-de-mumu-g9rzm",
+  storageBucket: "les-trucs-de-mumu-g9rzm.firebasestorage.app",
+  messagingSenderId: "59124662320",
+  appId: "1:59124662320:web:03311859dc5e627f14edf5",
 };
 
-// Vérification cruciale pour le débogage côté client (navigateur).
-if (typeof window !== 'undefined') {
-    if (!firebaseConfig.apiKey) {
-        console.error(`
-          ============================================================
-          ERREUR CRITIQUE: Clé API Firebase non détectée !
-          La variable NEXT_PUBLIC_FIREBASE_API_KEY est manquante ou vide.
-
-          CAUSE POSSIBLE :
-          Le serveur de développement n'a pas été redémarré après la modification
-          du fichier .env.local.
-
-          ACTION REQUISE :
-          1. Arrêtez le serveur (Ctrl+C).
-          2. Relancez-le avec "npm run dev".
-          
-          Pour la production : vérifiez que les secrets sont configurés sur
-          votre plateforme d'hébergement (Firebase App Hosting, Vercel...).
-          ============================================================
-        `);
-    } else {
-         // Débogage pour confirmer que la clé est bien chargée.
-         // Cette ligne peut être supprimée une fois le problème résolu.
-        console.log("✅ Configuration Firebase chargée. Clé API détectée.");
-    }
+// Vérification pour le débogage. Si la clé est manquante, cela lèvera une erreur claire.
+if (!firebaseConfig.apiKey) {
+  console.error("ERREUR CRITIQUE : La configuration Firebase est incomplète. La clé API est manquante.");
 }
-
 
 export default firebaseConfig;
