@@ -2,7 +2,8 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Playfair_Display, PT_Sans } from 'next/font/google'
+import { Playfair_Display, PT_Sans } from 'next/font/google';
+import { AuthProvider } from '@/context/auth-context';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -34,8 +35,10 @@ export default function RootLayout({
     <html lang="fr" className={`${playfair.variable} ${pt_sans.variable}`}>
       <head />
       <body className="font-body antialiased" suppressHydrationWarning={true}>
-        {children}
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
+import { useAuth } from '@/context/auth-context';
 
 const navLinks = [
   { href: '#about', label: 'À propos' },
@@ -20,6 +21,7 @@ const navLinks = [
 const Header = ({ generalContent }: { generalContent: any }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     setIsClient(true);
@@ -64,11 +66,13 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                 {link.label}
                 </Link>
             ))}
-             <Button variant="ghost" size="icon" asChild>
-                <Link href="/admin" aria-label="Espace administration">
-                  <User className="h-5 w-5" />
-                </Link>
-              </Button>
+             {user && (
+                <Button variant="ghost" size="icon" asChild>
+                  <Link href="/admin" aria-label="Espace administration">
+                    <User className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )}
             </nav>
 
             <div className="md:hidden">
@@ -92,13 +96,17 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                             </Link>
                             </SheetClose>
                         ))}
-                         <Separator className="my-2"/>
-                         <SheetClose asChild>
-                            <Link href="/admin" className="flex items-center px-4 py-2 text-foreground/80 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
-                               <User className="mr-2 h-4 w-4" />
-                               Admin
-                            </Link>
-                         </SheetClose>
+                         {user && (
+                            <>
+                                <Separator className="my-2"/>
+                                <SheetClose asChild>
+                                    <Link href="/admin" className="flex items-center px-4 py-2 text-foreground/80 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
+                                    <User className="mr-2 h-4 w-4" />
+                                    Admin
+                                    </Link>
+                                </SheetClose>
+                            </>
+                         )}
                         </nav>
                     </SheetContent>
                 </Sheet>
