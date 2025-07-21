@@ -34,6 +34,8 @@ export default function LoginPage() {
         // Analyse du code d'erreur Firebase pour un message plus précis
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             errorMessage = 'Email ou mot de passe incorrect.';
+        } else if (error.code === 'auth/api-key-not-valid') {
+            errorMessage = "La configuration du site est incorrecte. La clé d'API est invalide."
         }
         
         toast({
