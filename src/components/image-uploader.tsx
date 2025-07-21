@@ -22,16 +22,21 @@ interface ImageUploaderProps {
   aspectRatio?: number; // e.g., 16 / 9 or 1
 }
 
-// Helper to get cropped image data
-async function getCroppedImg(image: HTMLImageElement, crop: Crop): Promise<Blob> {
+// Helper to get cropped and compressed image data
+async function processImage(image: HTMLImageElement, crop?: Crop): Promise<Blob> {
     const canvas = document.createElement("canvas");
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
     
-    let targetWidth = crop.width * scaleX;
-    let targetHeight = crop.height * scaleY;
+    const cropX = crop ? crop.x * scaleX : 0;
+    const cropY = crop ? crop.y * scaleY : 0;
+    const cropWidth = crop ? crop.width * scaleX : image.naturalWidth;
+    const cropHeight = crop ? crop.height * scaleY : image.naturalHeight;
 
-    // Resize logic
+    let targetWidth = cropWidth;
+    let targetHeight = cropHeight;
+
+    // Resize logic: if the final cropped image is larger than MAX_IMAGE_DIMENSION, scale it down.
     if (targetWidth > MAX_IMAGE_DIMENSION || targetHeight > MAX_IMAGE_DIMENSION) {
         if (targetWidth > targetHeight) {
             targetHeight = (targetHeight / targetWidth) * MAX_IMAGE_DIMENSION;
@@ -54,10 +59,10 @@ async function getCroppedImg(image: HTMLImageElement, crop: Crop): Promise<Blob>
 
     ctx.drawImage(
         image,
-        crop.x * scaleX,
-        crop.y * scaleY,
-        crop.width * scaleX,
-        crop.height * scaleY,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
         0,
         0,
         targetWidth,
@@ -73,8 +78,8 @@ async function getCroppedImg(image: HTMLImageElement, crop: Crop): Promise<Blob>
                 }
                 resolve(blob);
             },
-            "image/webp",
-            0.85
+            "image/webp", // Convert to modern, efficient format
+            0.85 // Compress with 85% quality
         );
     });
 }
@@ -106,15 +111,26 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (aspectRatio) {
-        setOriginalFile(file);
-        const reader = new FileReader();
-        reader.addEventListener('load', () => setImgSrc(reader.result?.toString() || ''));
-        reader.readAsDataURL(file);
-        setIsCropModalOpen(true);
-    } else {
-        handleUpload(file);
-    }
+    setOriginalFile(file);
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+        const resultSrc = reader.result?.toString() || '';
+        setImgSrc(resultSrc);
+        if (aspectRatio) {
+            setIsCropModalOpen(true);
+        } else {
+            // If no aspect ratio, we still need an Image element to process
+            const img = document.createElement('img');
+            img.onload = async () => {
+                const compressedBlob = await processImage(img);
+                const newFileName = `${file.name.split('.').slice(0, -1).join('.')}.webp`;
+                handleUpload(compressedBlob, newFileName);
+            };
+            img.src = resultSrc;
+        }
+    });
+    reader.readAsDataURL(file);
+    
      // Reset the input value to allow re-uploading the same file
     event.target.value = '';
   };
@@ -126,7 +142,7 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
     setIsUploading(true);
     
     // Using a simpler path for public access
-    const finalFileName = fileName || (fileToUpload instanceof File ? fileToUpload.name : 'cropped-image.webp');
+    const finalFileName = fileName || (fileToUpload instanceof File ? fileToUpload.name : 'compressed-image.webp');
     const storageRef = ref(storage, `${folder}/${Date.now()}-${finalFileName}`);
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
@@ -195,8 +211,8 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
   }
   
   const handleCropConfirm = async () => {
-      if (completedCrop?.width && completedCrop?.height && imgRef.current && originalFile) {
-          const croppedBlob = await getCroppedImg(imgRef.current, completedCrop);
+      if (imgRef.current && originalFile) {
+          const croppedBlob = await processImage(imgRef.current, completedCrop);
           setIsCropModalOpen(false);
 
           const originalFileName = originalFile.name || 'image.jpg';
@@ -220,7 +236,7 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
                     <p className="mb-2 text-sm text-muted-foreground">
                         <span className="font-semibold text-primary">Cliquez pour choisir</span> ou glissez-déposez
                     </p>
-                    <p className="text-xs text-muted-foreground">{aspectRatio ? "Le recadrage sera proposé" : "PNG, JPG, WEBP (max 5Mo)"}</p>
+                    <p className="text-xs text-muted-foreground">{aspectRatio ? "Le recadrage et la compression seront proposés" : "La compression sera automatique (PNG, JPG, WEBP)"}</p>
                 </div>
             )}
             <Input
@@ -285,3 +301,5 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
     </div>
   );
 }
+
+    
