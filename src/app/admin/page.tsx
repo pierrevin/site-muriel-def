@@ -3,9 +3,10 @@
 
 import { useState, useEffect } from 'react';
 import { AdminEditor } from './editor';
-import { LoaderCircle, LogOut } from 'lucide-react';
+import { LoaderCircle, LogOut, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { getAuth } from 'firebase/auth';
 import { app } from '@/firebase/firebaseClient';
 
@@ -70,6 +71,12 @@ export default function AdminPage() {
       <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
         <h1 className="text-4xl font-bold font-headline">Administration du site</h1>
         <div className="flex items-center gap-2">
+           <Button variant="outline" asChild>
+              <Link href="/">
+                <Home className="mr-2 h-4 w-4" />
+                Revenir au site
+              </Link>
+           </Button>
            <Button variant="outline" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               Déconnexion
