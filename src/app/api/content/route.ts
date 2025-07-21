@@ -12,7 +12,6 @@ export async function GET() {
     const fileContent = await readFile(contentPath, 'utf-8');
     const content = JSON.parse(fileContent);
     
-    // Ajout d'en-têtes pour empêcher la mise en cache agressive par les CDN ou le navigateur
     const headers = new Headers();
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     headers.set('Pragma', 'no-cache');
@@ -37,7 +36,9 @@ export async function POST(request: Request) {
     const content = await request.json();
     await writeFile(contentPath, JSON.stringify(content, null, 2), 'utf-8');
     
-    // Revalidate paths to show updated content immediately
+    // Cette instruction est cruciale. Elle dit à Next.js d'invalider le cache
+    // de la page d'accueil ('/') et de la page admin pour forcer une reconstruction
+    // avec les nouvelles données.
     revalidatePath('/');
     revalidatePath('/admin');
     
@@ -50,4 +51,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

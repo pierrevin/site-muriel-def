@@ -7,24 +7,18 @@ import AboutSection from '@/components/sections/about';
 import CreationsSection from '@/components/sections/creations';
 import TestimonialsSection from '@/components/sections/testimonials';
 import ContactSection from '@/components/sections/contact';
-import { join } from 'path';
+import { promises as fs } from 'fs';
+import path from 'path';
 
-// Utilise maintenant un appel fetch pour s'assurer que les données sont toujours fraîches.
+// On revient à une lecture directe du fichier, qui est plus robuste au moment du build.
+// La revalidation sera assurée par l'API route.
 async function getContent() {
   try {
-    // On utilise une URL absolue pour le fetch côté serveur
-    const apiUrl = process.env.NODE_ENV === 'production'
-      ? 'https://www.lestrucsdemumu.fr/api/content' // Remplacez par votre URL de production
-      : 'http://localhost:3000/api/content';
-
-    const res = await fetch(`${apiUrl}`, { cache: 'no-store' });
-    
-    if (!res.ok) {
-      throw new Error(`Failed to fetch content: ${res.statusText}`);
-    }
-    return res.json();
+    const contentPath = path.join(process.cwd(), 'src', 'data', 'content.json');
+    const fileContent = await fs.readFile(contentPath, 'utf-8');
+    return JSON.parse(fileContent);
   } catch (error) {
-    console.error("Failed to fetch content, returning default structure.", error);
+    console.error("Failed to read content file, returning default structure.", error);
     // Retourne une structure par défaut si le fichier n'est pas trouvé ou invalide.
     return {
       general: { logoUrl: '' },
