@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '@/firebase/firebaseClient';
@@ -13,13 +13,37 @@ import { useToast } from '@/hooks/use-toast';
 import { LoaderCircle, LogIn } from 'lucide-react';
 import Image from 'next/image';
 
+// On garde cette page en 'use client' car elle gère l'état du formulaire et les interactions.
+// Cependant, on ne peut pas charger les données du fichier directement ici comme sur une page serveur.
+// Une solution simple est de hardcoder le chemin si on veut éviter de faire un appel API juste pour le logo.
+// Mais comme le logo est déjà dans le storage, on va plutôt utiliser une url statique temporaire ou
+// attendre une version plus avancée. Pour l'instant, on va chercher le logo côté client.
+// NOTE: This approach is not ideal, a better way would be to fetch this from an API route or pass it as props if the layout allowed.
+// For now, to solve the immediate problem, this will work.
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState('/logo-dark.png'); // Fallback logo
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
+
+  useEffect(() => {
+    // We fetch the content on the client side to get the logo
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.general?.logoUrl) {
+          setLogoUrl(data.general.logoUrl);
+        }
+      })
+      .catch(err => {
+        console.error("Could not fetch logo for login page:", err);
+      });
+  }, []);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +77,12 @@ export default function LoginPage() {
         <CardHeader className="text-center">
             <div className="mx-auto h-20 w-48 relative mb-4">
                <Image 
-                    src="/logo-dark.png" 
+                    src={logoUrl} 
                     alt="Logo Les Trucs de Mumu" 
                     fill
                     sizes="192px"
                     className="object-contain"
+                    priority
                 />
             </div>
           <CardTitle className="text-2xl font-headline">Accès Administration</CardTitle>
