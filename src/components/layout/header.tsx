@@ -36,6 +36,8 @@ const Header = ({ generalContent }: { generalContent: any }) => {
   if (!isClient) {
     return <header className="sticky top-0 z-50 w-full h-16 bg-transparent" />;
   }
+  
+  const adminHref = user ? '/admin' : '/login';
 
   return (
     <header className={cn(
@@ -66,13 +68,11 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                 {link.label}
                 </Link>
             ))}
-             {user && (
-                <Button variant="ghost" size="icon" asChild>
-                  <Link href="/admin" aria-label="Espace administration">
-                    <User className="h-5 w-5" />
-                  </Link>
-                </Button>
-              )}
+              <Button variant="ghost" size="icon" asChild>
+                <Link href={adminHref} aria-label={user ? "Espace administration" : "Connexion"}>
+                  <User className="h-5 w-5" />
+                </Link>
+              </Button>
             </nav>
 
             <div className="md:hidden">
@@ -96,17 +96,13 @@ const Header = ({ generalContent }: { generalContent: any }) => {
                             </Link>
                             </SheetClose>
                         ))}
-                         {user && (
-                            <>
-                                <Separator className="my-2"/>
-                                <SheetClose asChild>
-                                    <Link href="/admin" className="flex items-center px-4 py-2 text-foreground/80 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
-                                    <User className="mr-2 h-4 w-4" />
-                                    Admin
-                                    </Link>
-                                </SheetClose>
-                            </>
-                         )}
+                        <Separator className="my-2"/>
+                        <SheetClose asChild>
+                            <Link href={adminHref} className="flex items-center px-4 py-2 text-foreground/80 transition-colors hover:text-primary hover:bg-primary/10 rounded-md">
+                            <User className="mr-2 h-4 w-4" />
+                            {user ? 'Admin' : 'Connexion'}
+                            </Link>
+                        </SheetClose>
                         </nav>
                     </SheetContent>
                 </Sheet>
