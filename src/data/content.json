@@ -38,8 +38,7 @@
     "categories": [
       "Luminaire",
       "Peinture",
-      "Décoration",
-      "Autre"
+      "Décoration"
     ],
     "items": [
       {
@@ -77,18 +76,6 @@
         "title": "Spirale de Bois",
         "description": "Le mouvement naturel du bois capturé dans une forme décorative.",
         "category": "Décoration"
-      },
-      {
-        "src": "https://placehold.co/600x800.png",
-        "title": "Nouveau titre",
-        "description": "Nouvelle description",
-        "category": "Autre"
-      },
-      {
-        "src": "https://placehold.co/600x800.png",
-        "title": "Nouveau titre",
-        "description": "Nouvelle description",
-        "category": "Autre"
       }
     ]
   },
