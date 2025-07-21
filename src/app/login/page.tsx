@@ -28,10 +28,14 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/admin');
     } catch (error: any) {
+        console.error("Firebase Login Error:", error); // Log complet pour le débogage
         let errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+        
+        // Analyse du code d'erreur Firebase pour un message plus précis
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             errorMessage = 'Email ou mot de passe incorrect.';
         }
+        
         toast({
             variant: 'destructive',
             title: 'Erreur de connexion',
