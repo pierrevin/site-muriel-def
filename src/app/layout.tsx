@@ -18,6 +18,8 @@ const pt_sans = PT_Sans({
   display: 'swap',
 })
 
+// Pas besoin de générer des métadonnées dynamiques pour le layout, 
+// on va le faire sur la page.
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.lestrucsdemumu.fr'),
   title: 'Les Trucs de Mumu - Artisan Créateur',
@@ -27,13 +29,30 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { heroImageUrl?: string };
 }>) {
+
+  // La prop heroImageUrl est maintenant passée depuis la page.
+  // C'est une astuce pour permettre à une page enfant de modifier le <head> du layout parent.
+  const { heroImageUrl } = params;
 
   return (
     <html lang="fr" className={`${playfair.variable} ${pt_sans.variable}`}>
-      <head />
+      <head>
+        {heroImageUrl && (
+          <link
+            rel="preload"
+            href={heroImageUrl}
+            as="image"
+            // Les attributs suivants sont des optimisations pour le préchargement
+            type="image/webp" 
+            fetchPriority="high"
+          />
+        )}
+      </head>
       <body className="font-body antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
           {children}

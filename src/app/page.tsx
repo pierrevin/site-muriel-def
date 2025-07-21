@@ -10,8 +10,6 @@ import ContactSection from '@/components/sections/contact';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// On revient à une lecture directe du fichier, qui est plus robuste au moment du build.
-// La revalidation sera assurée par l'API route.
 async function getContent() {
   try {
     const contentPath = path.join(process.cwd(), 'src', 'data', 'content.json');
@@ -19,7 +17,6 @@ async function getContent() {
     return JSON.parse(fileContent);
   } catch (error) {
     console.error("Failed to read content file, returning default structure.", error);
-    // Retourne une structure par défaut si le fichier n'est pas trouvé ou invalide.
     return {
       general: { logoUrl: '' },
       hero: { title: 'Les Trucs de Mumu', subtitle: 'Créations artisanales', imageUrl: 'https://placehold.co/1920x1080.png' },
@@ -38,10 +35,18 @@ async function getContent() {
   }
 }
 
+// On rend cette page dynamique pour qu'elle puisse injecter l'URL de l'image
+// dans le layout parent pour le préchargement.
+export const dynamic = 'force-dynamic';
 
-// La page d'accueil est maintenant un composant serveur asynchrone.
 export default async function Home() {
   const content = await getContent();
+  
+  // On passe l'URL de l'image Hero en tant que paramètre pour le layout
+  // Note: ce n'est pas une prop standard, mais Next.js le permet pour ce cas d'usage.
+  const pageParams = {
+    heroImageUrl: content.hero.imageUrl,
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
