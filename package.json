@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "deploy": "git add . && (git commit -m 'Mise à jour du site' --allow-empty-message --no-edit || true) && git pull --rebase && git push",
+    "deploy": "firebase deploy --only storage && git add . && (git commit -m 'Mise à jour du site' --allow-empty-message --no-edit || true) && git pull --rebase",
     "save-version": "read -p 'Entrez un nom pour cette version (ex: v1.0.0): ' TAG && git tag -a \"$TAG\" -m \"Version $TAG\" && git push origin \"$TAG\""
   },
   "dependencies": {
