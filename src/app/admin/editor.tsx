@@ -507,7 +507,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
                 <AccordionTrigger className="text-xl font-headline">Réglages généraux</AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
                   <div>
-                    <Label>Logo du site</Label>
+                    <Label>Logo du site (format libre)</Label>
                     <ImageUploader 
                       currentImageUrl={content.general.logoUrl}
                       onUploadComplete={(url) => handleFieldChange('general', 'logoUrl', url)} 
