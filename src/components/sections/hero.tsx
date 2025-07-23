@@ -11,8 +11,10 @@ import { cn } from '@/lib/utils';
 
 const HeroSection = ({ content, generalContent }: { content: any, generalContent: any }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -21,9 +23,17 @@ const HeroSection = ({ content, generalContent }: { content: any, generalContent
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (!isClient) {
+      return (
+      <section id="home" className="relative h-screen min-h-[700px] w-full flex items-center justify-center text-center">
+        <Skeleton className="absolute inset-0" />
+      </section>
+    );
+  }
+
   if (!content) {
     return (
-      <section id="home" className="relative h-[calc(100vh-4rem)] min-h-[700px] w-full flex items-center justify-center text-center">
+      <section id="home" className="relative h-screen min-h-[700px] w-full flex items-center justify-center text-center">
         <Skeleton className="absolute inset-0" />
         <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <Skeleton className="w-3/4 h-24 max-w-4xl rounded-md" />
@@ -37,14 +47,12 @@ const HeroSection = ({ content, generalContent }: { content: any, generalContent
   return (
     <section id="home" className="relative h-screen min-h-[700px] w-full flex items-center justify-center text-center text-white overflow-hidden">
       <div className="absolute inset-0 bg-black/60 z-10" />
-        <Image
-          src={content.imageUrl}
-          alt="Atelier de création de Muriel Fauthoux"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
+      <div
+          className="absolute inset-0 z-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${content.imageUrl})` }}
+          aria-label="Atelier de création de Muriel Fauthoux"
           data-ai-hint="artisan workshop"
+          role="img"
         />
 
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
