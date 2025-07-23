@@ -98,26 +98,19 @@ const defaultContent = {
   },
 };
 
-// Fonction pour récupérer le contenu initial depuis l'ancien fichier JSON
-// pour la migration unique.
+// This function is kept for the one-time migration if Firestore is ever empty.
 async function getInitialContentForMigration() {
-    const dataFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
-    try {
-        const fileContents = await fs.readFile(dataFilePath, 'utf8');
-        return JSON.parse(fileContents);
-    } catch (error) {
-        console.warn("Ancien fichier content.json non trouvé pour la migration, utilisation du contenu par défaut.");
-        return defaultContent;
-    }
+    // This is now just a fallback returning the hardcoded default content.
+    return defaultContent;
 }
 
 
 export async function getContent() {
-  // Indique à Next.js de ne pas mettre en cache le résultat de cette fonction.
+  // Tells Next.js not to cache the result of this function.
   noStore();
   
-  if (!isFirebaseAdminConfigured) {
-    console.error("Le SDK Admin Firebase n'est pas configuré. Impossible de récupérer le contenu depuis Firestore. Utilisation du contenu par défaut.");
+  if (!isFirebaseAdminConfigured || !db) {
+    console.error("Firebase Admin SDK not configured or DB is null. Returning default content.");
     return defaultContent;
   }
 
@@ -127,20 +120,19 @@ export async function getContent() {
     const doc = await contentDocRef.get();
     
     if (doc.exists) {
-      // Si le document existe, renvoyer ses données.
+      // If the document exists, return its data.
       return doc.data() as any;
     } else {
-      // Si le document n'existe pas, c'est probablement la première exécution après la migration.
-      // On lit l'ancien fichier JSON, on le pousse vers Firestore, et on le renvoie.
-      console.log("Document de contenu non trouvé dans Firestore. Initialisation depuis la source locale...");
-      const initialContent = await getInitialContentForMigration();
-      await contentDocRef.set(initialContent);
-      console.log("Contenu initialisé dans Firestore avec succès.");
-      return initialContent;
+      // If the document does not exist, this might be the first run.
+      // We will seed the database with the default content.
+      console.log("Content document not found in Firestore. Initializing with default content...");
+      await contentDocRef.set(defaultContent);
+      console.log("Default content initialized in Firestore successfully.");
+      return defaultContent;
     }
   } catch (error) {
-    console.error("Erreur lors de la récupération du contenu depuis Firestore. Utilisation du contenu par défaut.", error);
-    // En cas d'erreur de communication avec Firestore, renvoyer le contenu par défaut pour éviter un crash.
+    console.error("Error fetching content from Firestore. Returning default content.", error);
+    // In case of any error communicating with Firestore, return default content to avoid a crash.
     return defaultContent;
   }
 }
