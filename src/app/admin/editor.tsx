@@ -145,23 +145,21 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   const handleSave = async () => {
     setSaveStatus("saving");
     
-    // Create a new, mutable copy of the content to work with
     const updatedContent = JSON.parse(JSON.stringify(content));
 
-    // Ensure the categories list is in sync with used categories
     if (updatedContent.creations.items) {
       const usedCategories = Array.from(new Set(updatedContent.creations.items.map((item: any) => item.category)));
       updatedContent.creations.categories = usedCategories.filter(Boolean);
     }
     
-    // Save the content that was just calculated and updated
     const result = await saveContent(updatedContent);
 
     if (result?.success) {
-      // Next.js revalidation will refresh the props,
-      // and the useEffect above will update the state.
-      // We also update the local state immediately to provide a snappier feel.
+      // The API route revalidates the path, so Next.js will refetch the props.
+      // We manually update the local state to provide a snappier feel
+      // and ensure the "saveStatus" useEffect has the correct comparison values.
       setContent(updatedContent);
+      setInitialContent(updatedContent);
       setSaveStatus("saved");
     } else {
       setSaveStatus("unsaved");
@@ -537,7 +535,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={handleSave}
-          disabled={saveStatus === 'saved'}
+          disabled={saveStatus === 'saved' || saveStatus === 'saving'}
           size="lg"
           className="shadow-2xl rounded-full pl-6 pr-6 h-14"
         >
@@ -549,8 +547,3 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     </>
   );
 }
-
-    
-    
-
-    
