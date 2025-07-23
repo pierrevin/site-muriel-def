@@ -127,8 +127,6 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     })
   );
 
-  // Ce useEffect est maintenant plus fiable. Il se déclenchera si les props
-  // changent (après une revalidation serveur) OU si l'utilisateur modifie le contenu.
   useEffect(() => {
     if (JSON.stringify(content) !== JSON.stringify(initialContent)) {
       setSaveStatus("unsaved");
@@ -137,8 +135,9 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     }
   }, [content, initialContent]);
 
-  // Si les données initiales du serveur changent, on met à jour l'éditeur.
-  // C'est le maillon manquant qui corrige le bug.
+  // **LA CORRECTION CRUCIALE EST ICI**
+  // Ce useEffect garantit que si les données du serveur changent (après une revalidation),
+  // l'état de l'éditeur est forcé de se synchroniser.
   useEffect(() => {
     setContent(initialContentProp);
     setInitialContent(initialContentProp);
@@ -147,7 +146,6 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   const handleSave = async () => {
     setSaveStatus("saving");
     
-    // Auto-update categories before saving
     let updatedContent = { ...content };
     if (updatedContent.creations.items) {
       const usedCategories = Array.from(new Set(content.creations.items.map((item: any) => item.category)));
@@ -158,14 +156,13 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
               categories: usedCategories.filter(Boolean)
           }
       };
-      // On met à jour l'état local pour refléter le changement immédiatement.
       setContent(updatedContent);
     }
 
     const result = await saveContent(updatedContent);
     if (result?.success) {
-      // Pas besoin de mettre à jour initialContent ici.
-      // Le composant parent sera re-rendu avec les nouvelles props après la revalidation.
+      // La revalidation de Next.js va rafraîchir les props,
+      // et le useEffect ci-dessus mettra à jour l'état.
       setSaveStatus("saved");
     } else {
       setSaveStatus("unsaved");
@@ -239,7 +236,6 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
             }
         };
 
-        // Ensure the new category is in the list for the dropdown
         if (field === 'category' && value && !prev.creations.categories.includes(value)) {
             updatedContent.creations.categories.push(value);
         }
