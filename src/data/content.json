@@ -5,7 +5,7 @@
   "hero": {
     "title": "Les Trucs de Mumu",
     "subtitle": "Créations artisanales de luminaires & sculptures uniques. L'art qui illumine votre quotidien.",
-    "imageUrl": "https://placehold.co/1920x1080.png"
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1753259736428-Elmer0001.webp?alt=media&token=b404d535-b692-4343-afb9-3f94c30d1180"
   },
   "features": {
     "title": "Mes engagements",
@@ -38,7 +38,8 @@
     "categories": [
       "Luminaire",
       "Peinture",
-      "Décoration"
+      "Décoration",
+      "Autre"
     ],
     "items": [
       {
@@ -76,6 +77,12 @@
         "title": "Spirale de Bois",
         "description": "Le mouvement naturel du bois capturé dans une forme décorative.",
         "category": "Décoration"
+      },
+      {
+        "src": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1753260143400-pierreimdt_Une_imagee_inspir_du_manga_One_Piece_en_couleur_av_80401935-b0a4-473a-b055-4066f0126dcd_0.webp?alt=media&token=9320f477-6137-4558-b2ce-5d234d238449",
+        "title": "test studio",
+        "description": "Nouvelle description",
+        "category": "Autre"
       }
     ]
   },

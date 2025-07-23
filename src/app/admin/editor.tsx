@@ -127,6 +127,8 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     })
   );
 
+  // Ce useEffect est maintenant plus fiable. Il se déclenchera si les props
+  // changent (après une revalidation serveur) OU si l'utilisateur modifie le contenu.
   useEffect(() => {
     if (JSON.stringify(content) !== JSON.stringify(initialContent)) {
       setSaveStatus("unsaved");
@@ -134,6 +136,13 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
       setSaveStatus("saved");
     }
   }, [content, initialContent]);
+
+  // Si les données initiales du serveur changent, on met à jour l'éditeur.
+  // C'est le maillon manquant qui corrige le bug.
+  useEffect(() => {
+    setContent(initialContentProp);
+    setInitialContent(initialContentProp);
+  }, [initialContentProp]);
 
   const handleSave = async () => {
     setSaveStatus("saving");
@@ -149,14 +158,14 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
               categories: usedCategories.filter(Boolean)
           }
       };
-      // We update the state here to reflect the change in the UI immediately
+      // On met à jour l'état local pour refléter le changement immédiatement.
       setContent(updatedContent);
     }
 
     const result = await saveContent(updatedContent);
     if (result?.success) {
-      setInitialContent(updatedContent);
-      // Explicitly set status to saved as the useEffect might not catch up instantly
+      // Pas besoin de mettre à jour initialContent ici.
+      // Le composant parent sera re-rendu avec les nouvelles props après la revalidation.
       setSaveStatus("saved");
     } else {
       setSaveStatus("unsaved");
@@ -304,6 +313,8 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
           }
       }));
   };
+  
+  if (!content) return null;
 
   return (
     <>
