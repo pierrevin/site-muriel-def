@@ -301,5 +301,3 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
     </div>
   );
 }
-
-    
