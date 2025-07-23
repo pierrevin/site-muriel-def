@@ -139,10 +139,17 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     setSaveStatus("saving");
     
     // Auto-update categories before saving
-    const updatedContent = { ...content };
+    let updatedContent = { ...content };
     if (updatedContent.creations.items) {
       const usedCategories = Array.from(new Set(content.creations.items.map((item: any) => item.category)));
-      updatedContent.creations.categories = usedCategories.filter(Boolean); // Filter out any null/undefined categories
+      updatedContent = {
+          ...updatedContent,
+          creations: {
+              ...updatedContent.creations,
+              categories: usedCategories.filter(Boolean)
+          }
+      };
+      // We update the state here to reflect the change in the UI immediately
       setContent(updatedContent);
     }
 
@@ -224,7 +231,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
         };
 
         // Ensure the new category is in the list for the dropdown
-        if (field === 'category' && !prev.creations.categories.includes(value)) {
+        if (field === 'category' && value && !prev.creations.categories.includes(value)) {
             updatedContent.creations.categories.push(value);
         }
 
@@ -417,7 +424,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
                                           index={index}
                                           handleCreationItemChange={handleCreationItemChange}
                                           handleRemoveCreationItem={handleRemoveCreationItem}
-                                          categories={content.creations.categories}
+                                          categories={content.creations.categories || []}
                                       />
                                   ))}
                               </div>
