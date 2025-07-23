@@ -1,50 +1,55 @@
 
 "use client";
 
-import { useTransition, useState, useEffect, useRef } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { sendContactForm } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { LoaderCircle } from "lucide-react";
 
 
-interface FormState {
-  message: string;
-  success: boolean;
+const initialState = {
+  message: "",
+  success: false,
+};
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" variant="secondary" disabled={pending}>
+      {pending ? (
+        <>
+          <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+          Envoi en cours...
+        </>
+      ) : (
+        "Envoyer le message"
+      )}
+    </Button>
+  );
 }
 
 export function ContactForm({ title }: { title: string }) {
   const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
-  const [state, setState] = useState<FormState | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    
-    startTransition(async () => {
-        const result = await sendContactForm(null, formData);
-        setState(result);
-
-        if (result.success) {
-            formRef.current?.reset();
-        }
-    });
-  };
+  const [state, formAction] = useFormState(sendContactForm, initialState);
 
   useEffect(() => {
-    if (!state) return;
+    if (!state.message) return;
 
     if (state.success) {
       toast({
         title: "Succès !",
         description: state.message,
       });
-    } else if (state.message) {
+      // Note: Le formulaire ne se réinitialise pas automatiquement avec useFormState,
+      // c'est le comportement attendu pour conserver les données en cas d'erreur.
+      // Une réinitialisation manuelle pourrait être ajoutée si nécessaire.
+    } else {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -52,12 +57,11 @@ export function ContactForm({ title }: { title: string }) {
       });
     }
   }, [state, toast]);
-  
 
   return (
     <>
       <h3 className="font-headline text-3xl text-secondary mb-6">{title}</h3>
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+      <form action={formAction} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="name">Nom</Label>
           <Input id="name" name="name" placeholder="Votre nom complet" required minLength={2} />
@@ -79,13 +83,8 @@ export function ContactForm({ title }: { title: string }) {
           <Textarea id="message" name="message" placeholder="Décrivez votre projet ou votre question ici..." className="min-h-[120px]" required minLength={10} />
         </div>
         
-         <Button type="submit" className="w-full" variant="secondary" disabled={isPending}>
-            {isPending ? "Envoi en cours..." : "Envoyer le message"}
-        </Button>
+        <SubmitButton />
 
-        {state && !state.success && state.message && (
-          <p className="text-sm font-medium text-destructive">{state.message}</p>
-        )}
       </form>
     </>
   );
