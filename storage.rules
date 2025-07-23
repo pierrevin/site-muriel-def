@@ -1,15 +1,15 @@
 
 rules_version = '2';
 
-// Documentation: https://firebase.google.com/docs/storage/security
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      // Tout le monde peut lire les fichiers (indispensable pour les visiteurs du site)
-      allow read: if true;
-      
-      // Seuls les utilisateurs authentifiés peuvent écrire (uploader, modifier, supprimer)
-      allow write: if request.auth != null;
+    // Autoriser la lecture publique de toutes les images
+    match /uploads/{userId}/{allPaths=**} {
+      allow read;
+      // Autoriser l'écriture (création, mise à jour, suppression) uniquement si l'utilisateur est authentifié
+      // et que l'ID utilisateur dans le chemin correspond à l'ID de l'utilisateur authentifié.
+      // Cela empêche un utilisateur de modifier les images d'un autre.
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
