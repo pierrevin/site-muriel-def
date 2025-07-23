@@ -1,14 +1,8 @@
-
 // Ce fichier centralise la logique de récupération du contenu du site
 // pour assurer une source de données unique et une revalidation cohérente.
 'use server';
 
-import { promises as fs } from 'fs';
-import path from 'path';
-
-// L'utilisation de 'unstable_noStore' est une mesure forte pour s'assurer
-// que les données sont toujours lues depuis le fichier, contournant les caches
-// de Next.js qui pourraient causer des incohérences.
+import { db, isFirebaseAdminConfigured } from '@/firebase/firebaseAdmin';
 import { unstable_noStore as noStore } from 'next/cache';
 
 const defaultContent = {
@@ -30,12 +24,31 @@ const defaultContent = {
 export async function getContent() {
   // Dit explicitement à Next.js de ne pas mettre en cache le résultat de cette fonction.
   noStore();
+  
+  if (!isFirebaseAdminConfigured || !db) {
+    console.log("Configuration Firebase Admin manquante, utilisation du contenu par défaut.");
+    return defaultContent;
+  }
+
   try {
-    const contentPath = path.join(process.cwd(), 'content.json');
-    const fileContent = await fs.readFile(contentPath, 'utf-8');
-    return JSON.parse(fileContent);
+    const docRef = db.collection('content').doc('site');
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      console.log('Aucun document de contenu trouvé dans Firestore, création avec les données par défaut.');
+      await docRef.set(defaultContent);
+      return defaultContent;
+    }
+
+    // On s'assure que les données récupérées ont la même structure que les données par défaut
+    // pour éviter les erreurs si des champs sont manquants dans Firestore.
+    const firestoreData = doc.data();
+    return { ...defaultContent, ...firestoreData };
+
   } catch (error) {
-    console.error("Échec de la lecture du fichier de contenu, renvoi de la structure par défaut.", error);
+    console.error("Échec de la lecture depuis Firestore, renvoi de la structure par défaut.", error);
+    // En cas d'erreur de connexion à Firestore, on renvoie les données par défaut
+    // pour que le site puisse quand même s'afficher.
     return defaultContent;
   }
 }
