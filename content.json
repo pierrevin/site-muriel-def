@@ -1,3 +1,4 @@
+
 {
   "general": {
     "logoUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff"
@@ -5,7 +6,7 @@
   "hero": {
     "title": "Les Trucs de Mumu",
     "subtitle": "Créations artisanales de luminaires & sculptures uniques. L'art qui illumine votre quotidien.",
-    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1753259736428-Elmer0001.webp?alt=media&token=b404d535-b692-4343-afb9-3f94c30d1180"
+    "imageUrl": "https://placehold.co/1920x1080.png"
   },
   "features": {
     "title": "Mes engagements",

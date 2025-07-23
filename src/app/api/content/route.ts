@@ -5,7 +5,7 @@ import { join } from 'path';
 import { revalidatePath } from 'next/cache';
 
 
-const contentPath = join(process.cwd(), 'src', 'data', 'content.json');
+const contentPath = join(process.cwd(), 'content.json');
 
 export async function GET() {
   try {

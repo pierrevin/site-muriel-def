@@ -31,7 +31,7 @@ export async function getContent() {
   // Dit explicitement à Next.js de ne pas mettre en cache le résultat de cette fonction.
   noStore();
   try {
-    const contentPath = path.join(process.cwd(), 'src', 'data', 'content.json');
+    const contentPath = path.join(process.cwd(), 'content.json');
     const fileContent = await fs.readFile(contentPath, 'utf-8');
     return JSON.parse(fileContent);
   } catch (error) {
