@@ -4,17 +4,17 @@ import { revalidatePath } from 'next/cache';
 import { db, isFirebaseAdminConfigured } from '@/firebase/firebaseAdmin';
 
 const contentDocRef = () => {
-  if (!isFirebaseAdminConfigured) {
-    throw new Error("Le SDK Firebase Admin n'est pas configuré.");
+  if (!isFirebaseAdminConfigured || !db) {
+    throw new Error("Le SDK Firebase Admin n'est pas configuré ou la base de données est indisponible.");
   }
-  return db!.collection('content').doc('site');
+  return db.collection('content').doc('site');
 }
 
 // GET: Récupère le contenu depuis Firestore.
 export async function GET() {
-  if (!isFirebaseAdminConfigured) {
+  if (!isFirebaseAdminConfigured || !db) {
     return new NextResponse(
-      JSON.stringify({ message: "La configuration du serveur Firebase est manquante." }),
+      JSON.stringify({ message: "La configuration du serveur Firebase est manquante ou la base de données est indisponible." }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
@@ -52,9 +52,9 @@ export async function GET() {
 
 // POST: Sauvegarde le contenu dans Firestore.
 export async function POST(request: Request) {
-   if (!isFirebaseAdminConfigured) {
+   if (!isFirebaseAdminConfigured || !db) {
     return new NextResponse(
-      JSON.stringify({ message: "La configuration du serveur Firebase est manquante." }),
+      JSON.stringify({ success: false, message: "La configuration du serveur Firebase est manquante ou la base de données est indisponible." }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
