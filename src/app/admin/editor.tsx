@@ -135,9 +135,6 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
     }
   }, [content, initialContent]);
 
-  // **LA CORRECTION CRUCIALE EST ICI**
-  // Ce useEffect garantit que si les données du serveur changent (après une revalidation),
-  // l'état de l'éditeur est forcé de se synchroniser.
   useEffect(() => {
     setContent(initialContentProp);
     setInitialContent(initialContentProp);
@@ -146,20 +143,21 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   const handleSave = async () => {
     setSaveStatus("saving");
     
-    let updatedContent = { ...content };
-    if (updatedContent.creations.items) {
-      const usedCategories = Array.from(new Set(content.creations.items.map((item: any) => item.category)));
-      updatedContent = {
-          ...updatedContent,
-          creations: {
-              ...updatedContent.creations,
-              categories: usedCategories.filter(Boolean)
-          }
-      };
-      setContent(updatedContent);
-    }
+    // Crée une nouvelle copie modifiable du contenu
+    let updatedContent = JSON.parse(JSON.stringify(content));
 
+    // Garantit que la liste des catégories est synchronisée avec les catégories utilisées
+    if (updatedContent.creations.items) {
+      const usedCategories = Array.from(new Set(updatedContent.creations.items.map((item: any) => item.category)));
+      updatedContent.creations.categories = usedCategories.filter(Boolean);
+    }
+    
+    // Met à jour l'interface immédiatement avec le contenu correct
+    setContent(updatedContent);
+
+    // Sauvegarde le contenu qui vient d'être calculé et mis à jour
     const result = await saveContent(updatedContent);
+
     if (result?.success) {
       // La revalidation de Next.js va rafraîchir les props,
       // et le useEffect ci-dessus mettra à jour l'état.
@@ -551,4 +549,5 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   );
 }
 
+    
     
