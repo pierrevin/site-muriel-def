@@ -35,18 +35,8 @@ async function getContent() {
   }
 }
 
-// On rend cette page dynamique pour qu'elle puisse injecter l'URL de l'image
-// dans le layout parent pour le préchargement.
-export const dynamic = 'force-dynamic';
-
 export default async function Home() {
   const content = await getContent();
-  
-  // On passe l'URL de l'image Hero en tant que paramètre pour le layout
-  // Note: ce n'est pas une prop standard, mais Next.js le permet pour ce cas d'usage.
-  const pageParams = {
-    heroImageUrl: content.hero.imageUrl,
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

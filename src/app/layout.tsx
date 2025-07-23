@@ -29,15 +29,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { heroImageUrl?: string };
 }>) {
 
-  // La prop heroImageUrl est maintenant passée depuis la page.
-  // C'est une astuce pour permettre à une page enfant de modifier le <head> du layout parent.
-  const { heroImageUrl } = params;
   const logoUrl = "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff";
 
   return (
@@ -46,16 +41,6 @@ export default function RootLayout({
         <link rel="icon" href={logoUrl} type="image/png" />
         <link rel="shortcut icon" href={logoUrl} type="image/png" />
         <link rel="apple-touch-icon" href={logoUrl} />
-        {heroImageUrl && (
-          <link
-            rel="preload"
-            href={heroImageUrl}
-            as="image"
-            // Les attributs suivants sont des optimisations pour le préchargement
-            type="image/webp" 
-            fetchPriority="high"
-          />
-        )}
       </head>
       <body className="font-body antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
