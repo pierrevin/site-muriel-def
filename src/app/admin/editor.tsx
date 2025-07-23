@@ -136,6 +136,8 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   }, [content, initialContent]);
 
   useEffect(() => {
+    // This effect ensures that if the server-provided data changes (e.g. after a revalidation),
+    // the editor's state is updated to reflect those new props. This prevents stale state.
     setContent(initialContentProp);
     setInitialContent(initialContentProp);
   }, [initialContentProp]);
@@ -143,24 +145,23 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   const handleSave = async () => {
     setSaveStatus("saving");
     
-    // Crée une nouvelle copie modifiable du contenu
-    let updatedContent = JSON.parse(JSON.stringify(content));
+    // Create a new, mutable copy of the content to work with
+    const updatedContent = JSON.parse(JSON.stringify(content));
 
-    // Garantit que la liste des catégories est synchronisée avec les catégories utilisées
+    // Ensure the categories list is in sync with used categories
     if (updatedContent.creations.items) {
       const usedCategories = Array.from(new Set(updatedContent.creations.items.map((item: any) => item.category)));
       updatedContent.creations.categories = usedCategories.filter(Boolean);
     }
     
-    // Met à jour l'interface immédiatement avec le contenu correct
-    setContent(updatedContent);
-
-    // Sauvegarde le contenu qui vient d'être calculé et mis à jour
+    // Save the content that was just calculated and updated
     const result = await saveContent(updatedContent);
 
     if (result?.success) {
-      // La revalidation de Next.js va rafraîchir les props,
-      // et le useEffect ci-dessus mettra à jour l'état.
+      // Next.js revalidation will refresh the props,
+      // and the useEffect above will update the state.
+      // We also update the local state immediately to provide a snappier feel.
+      setContent(updatedContent);
       setSaveStatus("saved");
     } else {
       setSaveStatus("unsaved");

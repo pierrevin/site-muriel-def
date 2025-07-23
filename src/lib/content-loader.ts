@@ -1,8 +1,10 @@
+
 // Ce fichier centralise la logique de récupération du contenu du site
 // pour assurer une source de données unique et une revalidation cohérente.
 'use server';
 
-import { db, isFirebaseAdminConfigured } from '@/firebase/firebaseAdmin';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { unstable_noStore as noStore } from 'next/cache';
 
 const defaultContent = {
@@ -73,35 +75,21 @@ const defaultContent = {
 };
 
 export async function getContent() {
-  // Dit explicitement à Next.js de ne pas mettre en cache le résultat de cette fonction.
+  // This explicitly tells Next.js not to cache the result of this function.
   noStore();
   
-  if (!isFirebaseAdminConfigured || !db) {
-    console.error("Configuration Firebase Admin manquante, utilisation du contenu par défaut.");
-    return defaultContent;
-  }
+  const dataFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
 
   try {
-    const docRef = db.collection('content').doc('site');
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-      console.warn('Aucun document de contenu trouvé dans Firestore, création avec les données par défaut.');
-      // Le document n'existe pas, on le crée avec le contenu par défaut complet
-      await docRef.set(defaultContent);
-      return defaultContent;
-    }
-
-    const firestoreData = doc.data();
-    // On fusionne les données de Firestore avec le contenu par défaut.
-    // Cela garantit que si des nouvelles clés sont ajoutées au defaultContent,
-    // le site ne plantera pas. La donnée de Firestore a toujours la priorité.
-    return { ...defaultContent, ...firestoreData };
-
+    const fileContents = await fs.readFile(dataFilePath, 'utf8');
+    const data = JSON.parse(fileContents);
+    // Merge the data from the file with the default content.
+    // This ensures that if new keys are added to defaultContent, the site won't break.
+    // The data from content.json always takes precedence.
+    return { ...defaultContent, ...data };
   } catch (error) {
-    console.error("Échec de la lecture depuis Firestore, renvoi du contenu par défaut.", error);
-    // En cas d'erreur de connexion à Firestore, on renvoie les données par défaut
-    // pour que le site puisse quand même s'afficher.
+    console.warn("Could not read content.json, falling back to default content.", error);
+    // In case of error (e.g., file not found), return the default content.
     return defaultContent;
   }
 }
