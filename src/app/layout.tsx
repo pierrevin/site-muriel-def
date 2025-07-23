@@ -34,10 +34,13 @@ export default function RootLayout({
 }>) {
 
   const logoUrl = "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff";
+  const heroImageUrl = "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1753171633343-DSC00757.webp?alt=media&token=d1f70a1a-4d76-4dc5-a0c5-a6e2e50fbf82";
+
 
   return (
     <html lang="fr" className={`${playfair.variable} ${pt_sans.variable}`}>
       <head>
+        <link rel="preload" href={heroImageUrl} as="image" />
         <link rel="icon" href={logoUrl} type="image/png" />
         <link rel="shortcut icon" href={logoUrl} type="image/png" />
         <link rel="apple-touch-icon" href={logoUrl} />

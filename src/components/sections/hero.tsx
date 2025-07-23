@@ -47,13 +47,15 @@ const HeroSection = ({ content, generalContent }: { content: any, generalContent
   return (
     <section id="home" className="relative h-screen min-h-[700px] w-full flex items-center justify-center text-center text-white overflow-hidden">
       <div className="absolute inset-0 bg-black/60 z-10" />
-      <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${content.imageUrl})` }}
-          aria-label="Atelier de création de Muriel Fauthoux"
-          data-ai-hint="artisan workshop"
-          role="img"
-        />
+      <Image
+        src={content.imageUrl}
+        alt="Atelier de création de Muriel Fauthoux"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover z-0"
+        data-ai-hint="artisan workshop"
+      />
 
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         {generalContent?.logoUrl && (
