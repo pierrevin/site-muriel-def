@@ -34,6 +34,7 @@ export default function RootLayout({
 }>) {
 
   const logoUrl = "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff";
+  const heroImageUrl = "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1753171633343-DSC00757_optimized.webp?alt=media&token=a8e09c85-e2a7-4767-ab64-508b7646d62b"
 
   return (
     <html lang="fr" className={`${playfair.variable} ${pt_sans.variable}`}>
@@ -41,6 +42,7 @@ export default function RootLayout({
         <link rel="icon" href={logoUrl} type="image/png" />
         <link rel="shortcut icon" href={logoUrl} type="image/png" />
         <link rel="apple-touch-icon" href={logoUrl} />
+        <link rel="preload" href={heroImageUrl} as="image" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
