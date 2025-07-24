@@ -15,8 +15,8 @@ if (!admin.apps.length) {
 }
 
 // Initialise les services nécessaires.
-const db = admin.firestore();
-const auth = admin.auth();
+const db = admin.apps.length ? admin.firestore() : null;
+const auth = admin.apps.length ? admin.auth() : null;
 
 // Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
 export { admin, db, auth };

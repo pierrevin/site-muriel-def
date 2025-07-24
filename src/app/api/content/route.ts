@@ -1,8 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { auth, db } from '@/firebase/firebaseAdmin';
-import { admin } from 'firebase-admin';
+import { db, auth } from '@/firebase/firebaseAdmin';
 
 const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
@@ -10,8 +9,8 @@ const FIRESTORE_COLLECTION = 'content';
 // POST: Sauvegarde le nouveau contenu dans Firestore.
 export async function POST(request: Request) {
   // 1. Vérifier si la base de données est connectée.
-  if (!db) {
-    console.error("Échec de la sauvegarde : la base de données n'est pas connectée.");
+  if (!db || !auth) {
+    console.error("Échec de la sauvegarde : la connexion à Firebase (db ou auth) n'est pas établie.");
     return NextResponse.json({ success: false, message: "Erreur serveur : la base de données est indisponible." }, { status: 500 });
   }
 
@@ -42,11 +41,10 @@ export async function POST(request: Request) {
     await docRef.set(content, { merge: true });
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
-    // C'est l'étape clé pour que les modifications apparaissent immédiatement.
     revalidatePath('/');
     revalidatePath('/admin');
     
-    return NextResponse.json({ success: true, message: "Contenu sauvegardé avec succès dans Firestore !" });
+    return NextResponse.json({ success: true, message: "Contenu sauvegardé avec succès !" });
 
   } catch (error) {
     console.error("Échec de la sauvegarde dans Firestore:", error);
