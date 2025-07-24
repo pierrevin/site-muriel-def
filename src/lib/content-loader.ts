@@ -5,16 +5,17 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { unstable_noStore as noStore } from 'next/cache';
 
-// Nom du fichier de contenu
+// Le chemin vers le fichier de contenu local.
 const CONTENT_FILE = 'src/data/content.json';
 
 /**
- * Récupère les données du contenu depuis le fichier JSON local.
- * Si le fichier n'existe pas ou s'il y a une erreur, un contenu par défaut est retourné
- * pour éviter que le site ne plante.
+ * Récupère les données du contenu en lisant directement le fichier JSON local.
+ * C'est la seule source de vérité pour le contenu affiché sur le site.
+ * Si le fichier n'existe pas, un contenu par défaut est retourné pour éviter un crash.
  */
 export async function getContent() {
-  // Garantit que le contenu est toujours frais à chaque requête.
+  // Garantit que le contenu est toujours lu depuis le fichier à chaque requête,
+  // et non servi depuis un cache potentiellement obsolète.
   noStore();
   
   const filePath = path.join(process.cwd(), CONTENT_FILE);
@@ -24,11 +25,15 @@ export async function getContent() {
     return JSON.parse(fileContent);
   } catch (error) {
     console.error(`Erreur lors de la lecture du fichier de contenu (${filePath}). Le site utilisera les données par défaut.`, error);
-    // Retourne un contenu par défaut robuste si la lecture échoue.
+    // Retourne un contenu par défaut robuste si la lecture du fichier échoue.
     return getDefaultContent();
   }
 }
 
+/**
+ * Fournit une structure de contenu par défaut pour garantir que le site
+ * peut toujours s'afficher même si le fichier content.json est manquant ou corrompu.
+ */
 function getDefaultContent() {
     return {
       general: {
