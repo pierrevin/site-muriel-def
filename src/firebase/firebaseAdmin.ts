@@ -1,23 +1,21 @@
-
 // src/firebase/firebaseAdmin.ts
 import admin from 'firebase-admin';
 import firebaseConfig from './firebaseConfig';
 
 // Ce fichier est destiné à une exécution côté serveur uniquement.
 
-// Cette approche est la plus robuste pour les environnements gérés par Google
-// (comme App Hosting, Cloud Run, etc.) et pour le développement local.
-// Le SDK essaiera de trouver les credentials automatiquement via les "Application Default Credentials".
+// Initialisation robuste pour tous les environnements (local, Cloud Run, etc.)
 if (!admin.apps.length) {
   try {
-    // Utiliser le projectId de la configuration client garantit que le serveur sait à quel projet se connecter.
+    // Utilise les Application Default Credentials (ADC) de Google Cloud,
+    // qui est la méthode standard pour les environnements hébergés par Google.
     admin.initializeApp({
-        projectId: firebaseConfig.projectId,
-        // Les credentials (service account) sont automatiquement trouvés par l'environnement Google Cloud.
+      credential: admin.credential.applicationDefault(),
+      projectId: firebaseConfig.projectId,
     });
-    console.log("Firebase Admin SDK initialisé avec succès via projectId.");
+    console.log("Firebase Admin SDK initialisé avec succès via Application Default Credentials.");
   } catch (e) {
-     console.error('Erreur critique lors de l\'initialisation de Firebase Admin SDK:', e);
+    console.error('Erreur critique lors de l\'initialisation de Firebase Admin SDK:', e);
   }
 }
 
@@ -27,13 +25,10 @@ const db = admin.apps.length ? admin.firestore() : null;
 const auth = admin.apps.length ? admin.auth() : null;
 
 if (!db) {
-    console.error("Échec de l'initialisation de Firestore (db).");
+    console.error("Échec de l'initialisation de Firestore (db). Les sauvegardes échoueront.");
 }
 if (!auth) {
-    console.error("Échec de l'initialisation de Firebase Auth (auth).");
-}
-if (!db || !auth) {
-    console.error("Les fonctionnalités serveur seront compromises.");
+    console.error("Échec de l'initialisation de Firebase Auth (auth). La validation des utilisateurs échouera.");
 }
 
 // Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
