@@ -4,6 +4,7 @@
 import { useState, useRef, ChangeEvent, useId, useEffect } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebaseClient';
+import { useAuth } from '@/context/auth-context';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -91,7 +92,8 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const uniqueId = useId();
-  const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const { user } = useAuth();
   
   // Cropping state
   const [crop, setCrop] = useState<Crop>();
@@ -110,6 +112,11 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (!user) {
+        setError("Vous devez être connecté pour uploader une image.");
+        return;
+    }
 
     setOriginalFile(file);
     const reader = new FileReader();
@@ -136,14 +143,19 @@ export function ImageUploader({ onUploadComplete, folder = 'uploads', currentIma
   };
   
   const handleUpload = (fileToUpload: File | Blob, fileName?: string) => {
+    if (!user) {
+        setError("Authentification requise pour l'upload. Veuillez vous reconnecter.");
+        return;
+    }
+
     setProgress(0);
     setError(null);
     setUploadSuccess(false);
     setIsUploading(true);
     
-    // Using a simpler path for public access
     const finalFileName = fileName || (fileToUpload instanceof File ? fileToUpload.name : 'compressed-image.webp');
-    const storageRef = ref(storage, `${folder}/${Date.now()}-${finalFileName}`);
+    // Path includes the user's UID to match storage rules
+    const storageRef = ref(storage, `${folder}/${user.uid}/${Date.now()}-${finalFileName}`);
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
     uploadTask.on('state_changed',
