@@ -1,6 +1,4 @@
 // src/firebase/firebaseAdmin.ts
-'use server';
-
 import admin from 'firebase-admin';
 
 // Ce fichier est destiné à une exécution côté serveur uniquement.
