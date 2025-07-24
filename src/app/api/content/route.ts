@@ -37,8 +37,10 @@ export async function POST(request: Request) {
     // Référence au document dans Firestore
     const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
     
-    // Écrit le contenu dans le document
-    await docRef.set(content, { merge: true });
+    // Écrit le contenu dans le document.
+    // .set() sans merge va créer le document s'il n'existe pas ou l'écraser complètement,
+    // ce qui est le comportement souhaité pour l'éditeur.
+    await docRef.set(content);
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
     revalidatePath('/');
