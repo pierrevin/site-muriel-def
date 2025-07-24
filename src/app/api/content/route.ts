@@ -1,20 +1,17 @@
 
+'use server';
+
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { db, auth } from '@/firebase/firebaseAdmin';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { auth } from '@/firebase/firebaseAdmin';
 
-const FIRESTORE_DOC_ID = 'main';
-const FIRESTORE_COLLECTION = 'content';
+const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
 
-// POST: Sauvegarde le nouveau contenu dans Firestore.
+// POST: Sauvegarde le nouveau contenu dans le fichier local content.json.
 export async function POST(request: Request) {
-  // 1. Vérifier si la base de données est connectée. C'est la première et la plus importante vérification.
-  if (!db || !auth) {
-    console.error("Échec de la sauvegarde : la connexion à Firebase (db ou auth) n'est pas établie. Vérifiez l'initialisation de Firebase Admin.");
-    return NextResponse.json({ success: false, message: "Erreur serveur : la base de données est indisponible." }, { status: 500 });
-  }
-
-  // 2. Vérifier l'authentification de l'utilisateur.
+  // 1. Vérifier l'authentification de l'utilisateur (on garde cette sécurité).
   try {
     const authorizationHeader = request.headers.get('Authorization');
     if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
@@ -22,7 +19,12 @@ export async function POST(request: Request) {
     }
     const idToken = authorizationHeader.split('Bearer ')[1];
     
-    // Valider le jeton avec Firebase Admin SDK
+    // Si l'authentification Firebase Admin n'est pas initialisée, on ne peut pas valider.
+    if (!auth) {
+        console.error("Échec de la sauvegarde : Firebase Auth n'est pas initialisé côté serveur.");
+        return NextResponse.json({ success: false, message: "Erreur serveur : le service d'authentification est indisponible." }, { status: 500 });
+    }
+    
     await auth.verifyIdToken(idToken);
     
   } catch (error) {
@@ -30,15 +32,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: 'Non autorisé : jeton invalide.' }, { status: 403 });
   }
 
-  // 3. Procéder à la sauvegarde si l'authentification est réussie.
+  // 2. Procéder à la sauvegarde dans le fichier local si l'authentification est réussie.
   try {
     const content = await request.json();
+    const contentString = JSON.stringify(content, null, 2); // Le 2 et null servent à joli-imprimer le JSON
     
-    // Référence au document dans Firestore
-    const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
-    
-    // Écrit le contenu dans le document.
-    await docRef.set(content);
+    // Écrit le contenu dans le fichier local.
+    await fs.writeFile(contentFilePath, contentString, 'utf-8');
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
     revalidatePath('/');
@@ -47,9 +47,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: "Contenu sauvegardé avec succès !" });
 
   } catch (error) {
-    console.error("Échec de la sauvegarde dans Firestore:", error);
+    console.error("Échec de la sauvegarde dans le fichier content.json:", error);
     return NextResponse.json(
-      { success: false, message: "Échec de la sauvegarde du contenu." },
+      { success: false, message: "Échec de la sauvegarde du contenu dans le fichier." },
       { status: 500 }
     );
   }
