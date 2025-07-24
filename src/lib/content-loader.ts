@@ -41,6 +41,12 @@ export async function getContent() {
 
   const defaults = getDefaultContent();
 
+  // STABILIZATION MEASURE: Return local content directly to avoid server crash.
+  // The Firestore connection issue will be isolated to the save action.
+  return defaults;
+
+  /*
+  // Original code that was causing the crash
   if (!db) {
     console.warn("CRITICAL: Firestore connection failed. Returning local file content.");
     return defaults;
@@ -64,4 +70,5 @@ export async function getContent() {
     console.error("Critical error accessing Firestore. Returning local file content as a fallback.", error);
     return defaults;
   }
+  */
 }
