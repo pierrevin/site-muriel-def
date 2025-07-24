@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { db, auth } from '@/firebase/firebaseAdmin';
+import { admin, db } from '@/firebase/firebaseAdmin';
 
 const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
@@ -20,8 +20,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Non autorisé : jeton manquant.' }, { status: 401 });
     }
     const idToken = authorizationHeader.split('Bearer ')[1];
+    
     // Valider le jeton avec Firebase Admin SDK
-    await auth.verifyIdToken(idToken);
+    await admin.auth().verifyIdToken(idToken);
+    
   } catch (error) {
     console.error("Échec de la validation du jeton :", error);
     return NextResponse.json({ success: false, message: 'Non autorisé : jeton invalide.' }, { status: 403 });
