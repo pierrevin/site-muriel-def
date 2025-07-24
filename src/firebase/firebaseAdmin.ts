@@ -1,3 +1,4 @@
+
 // src/firebase/firebaseAdmin.ts
 import admin from 'firebase-admin';
 import firebaseConfig from './firebaseConfig';
@@ -13,14 +14,20 @@ if (!admin.apps.length) {
     admin.initializeApp({
         projectId: firebaseConfig.projectId
     });
+    console.log("Firebase Admin SDK initialisé avec succès.");
   } catch (e) {
-     console.error('Firebase admin initialization error', e);
+     console.error('Erreur critique lors de l\'initialisation de Firebase Admin SDK:', e);
   }
 }
 
 // Initialise les services nécessaires.
+// On vérifie que admin.apps.length > 0 avant d'essayer d'accéder aux services.
 const db = admin.apps.length ? admin.firestore() : null;
 const auth = admin.apps.length ? admin.auth() : null;
+
+if (!db || !auth) {
+    console.error("Échec de l'initialisation des services Firebase (db ou auth). Les fonctionnalités serveur seront compromises.");
+}
 
 // Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
 export { admin, db, auth };

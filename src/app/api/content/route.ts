@@ -8,9 +8,9 @@ const FIRESTORE_COLLECTION = 'content';
 
 // POST: Sauvegarde le nouveau contenu dans Firestore.
 export async function POST(request: Request) {
-  // 1. Vérifier si la base de données est connectée.
+  // 1. Vérifier si la base de données est connectée. C'est la première et la plus importante vérification.
   if (!db || !auth) {
-    console.error("Échec de la sauvegarde : la connexion à Firebase (db ou auth) n'est pas établie.");
+    console.error("Échec de la sauvegarde : la connexion à Firebase (db ou auth) n'est pas établie. Vérifiez l'initialisation de Firebase Admin.");
     return NextResponse.json({ success: false, message: "Erreur serveur : la base de données est indisponible." }, { status: 500 });
   }
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     
     // Écrit le contenu dans le document.
     // .set() sans merge va créer le document s'il n'existe pas ou l'écraser complètement,
-    // ce qui est le comportement souhaité pour l'éditeur.
+    // ce qui est le comportement souhaité et le plus robuste pour l'éditeur.
     await docRef.set(content);
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
