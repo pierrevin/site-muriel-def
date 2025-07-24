@@ -19,5 +19,9 @@ const firebaseConfig = {
 if (!firebaseConfig.apiKey) {
   console.error("ERREUR CRITIQUE : La configuration Firebase est incomplète. La clé API est manquante.");
 }
+if (!firebaseConfig.projectId) {
+    console.error("ERREUR CRITIQUE : La configuration Firebase est incomplète. Le projectId est manquant.");
+}
+
 
 export default firebaseConfig;

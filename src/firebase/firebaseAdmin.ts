@@ -12,9 +12,10 @@ if (!admin.apps.length) {
   try {
     // Utiliser le projectId de la configuration client garantit que le serveur sait à quel projet se connecter.
     admin.initializeApp({
-        projectId: firebaseConfig.projectId
+        projectId: firebaseConfig.projectId,
+        // Les credentials (service account) sont automatiquement trouvés par l'environnement Google Cloud.
     });
-    console.log("Firebase Admin SDK initialisé avec succès.");
+    console.log("Firebase Admin SDK initialisé avec succès via projectId.");
   } catch (e) {
      console.error('Erreur critique lors de l\'initialisation de Firebase Admin SDK:', e);
   }
@@ -25,8 +26,14 @@ if (!admin.apps.length) {
 const db = admin.apps.length ? admin.firestore() : null;
 const auth = admin.apps.length ? admin.auth() : null;
 
+if (!db) {
+    console.error("Échec de l'initialisation de Firestore (db).");
+}
+if (!auth) {
+    console.error("Échec de l'initialisation de Firebase Auth (auth).");
+}
 if (!db || !auth) {
-    console.error("Échec de l'initialisation des services Firebase (db ou auth). Les fonctionnalités serveur seront compromises.");
+    console.error("Les fonctionnalités serveur seront compromises.");
 }
 
 // Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
