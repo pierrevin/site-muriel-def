@@ -17,7 +17,6 @@ if (serviceAccountString) {
   }
 }
 
-
 // Vérifie si l'application Firebase Admin a déjà été initialisée
 // pour éviter les erreurs, notamment lors du rechargement à chaud en développement.
 if (!admin.apps.length) {
@@ -35,13 +34,13 @@ if (!admin.apps.length) {
     // on l'indique clairement dans les logs du serveur. L'app ne plantera pas.
     console.warn(
       'Firebase Admin SDK: Les credentials du compte de service sont manquants. ' +
-      'Les fonctionnalités Firestore ne seront pas disponibles.'
+      'Les fonctionnalités qui en dépendent (Auth Admin) ne seront pas disponibles.'
     );
   }
 }
 
 // Initialise les services nécessaires.
-const db = admin.apps.length ? admin.firestore() : null;
+const db = null; // La base de données n'est plus utilisée pour le contenu.
 const auth = admin.apps.length ? admin.auth() : null;
 
 // Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
