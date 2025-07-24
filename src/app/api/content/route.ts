@@ -1,6 +1,8 @@
+
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { admin, db } from '@/firebase/firebaseAdmin';
+import { auth, db } from '@/firebase/firebaseAdmin';
+import { admin } from 'firebase-admin';
 
 const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
     const idToken = authorizationHeader.split('Bearer ')[1];
     
     // Valider le jeton avec Firebase Admin SDK
-    await admin.auth().verifyIdToken(idToken);
+    await auth.verifyIdToken(idToken);
     
   } catch (error) {
     console.error("Échec de la validation du jeton :", error);
@@ -37,7 +39,7 @@ export async function POST(request: Request) {
     const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
     
     // Écrit le contenu dans le document
-    await docRef.set(content);
+    await docRef.set(content, { merge: true });
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
     // C'est l'étape clé pour que les modifications apparaissent immédiatement.

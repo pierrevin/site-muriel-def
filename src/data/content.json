@@ -1,3 +1,4 @@
+
 {
   "general": {
     "logoUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff"
@@ -5,7 +6,7 @@
   "hero": {
     "title": "Les Trucs de Mumu",
     "subtitle": "Créations artisanales uniques en métal et vitrail",
-    "imageUrl": "https://placehold.co/1920x1080.png"
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753337494916-Elmer0001.webp?alt=media&token=94d370e2-4f70-448c-acb7-0b2360220a3d"
   },
   "features": {
     "title": "Mes engagements d'artisane",
@@ -28,17 +29,57 @@
   "about": {
     "title": "L'art du métal, la magie du verre",
     "text": "Je suis Muriel Fauthoux, artisan créatrice passionnée par la transformation de la matière brute en objets d'art qui captent la lumière et racontent une histoire. Mon univers est fait de métal sculpté, de vitrail coloré et de curiosité sans cesse renouvelée.\n\nChaque pièce qui naît dans mon atelier est le fruit d'un dialogue entre le métal, que je tords, soude et façonne, et le verre, que je choisis pour ses couleurs et ses textures uniques. Luminaires, sculptures, objets décoratifs... mes créations sont des invitations à voir le monde autrement.\n\nPlus qu'une simple décoration, je cherche à créer des émotions, des atmosphères. Une lumière qui danse sur un mur, une sculpture qui dialogue avec votre espace... C'est cette petite étincelle de magie que je souhaite apporter dans votre quotidien.",
-    "imageUrl": "https://placehold.co/800x1000.png"
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1752737237943-mumu-portrait.jpg?alt=media&token=b7189178-5a4e-4f36-9a25-a1c2269a8459"
   },
   "creations": {
     "title": "Mes créations",
     "subtitle": "Explorez un univers où la matière brute rencontre la poésie de la lumière. Chaque pièce est unique, faite à la main dans mon atelier.",
-    "items": [],
-    "categories": []
+    "items": [
+      {
+        "src": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753341298677-DSC00784.webp?alt=media&token=2069e2d5-0e10-4f57-af64-780ceb83c352",
+        "title": "Lampe Poisson",
+        "description": "Vitrail et métal soudé",
+        "category": "Luminaire"
+      },
+      {
+        "src": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753341328356-DSC01334.webp?alt=media&token=4db7a73a-dc4b-4908-8285-4ce211fff7d2",
+        "title": "La Penseuse",
+        "description": "Sculpture en métal",
+        "category": "Sculpture"
+      },
+      {
+        "src": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753341281372-DSC00893.webp?alt=media&token=38356b84-5ede-43ba-beda-c0e70e7cc103",
+        "title": "Fleur de Lumière",
+        "description": "Lampe d'ambiance",
+        "category": "Luminaire"
+      },
+      {
+        "src": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753341341306-IMG_20250707_165658_204.webp?alt=media&token=fef827fc-ca97-470c-8234-d29ae2c33619",
+        "title": "Miroir Mosaïque",
+        "description": "Cadre en vitrail coloré",
+        "category": "Décoration"
+      }
+    ],
+    "categories": [
+      "Luminaire",
+      "Sculpture",
+      "Décoration"
+    ]
   },
   "testimonials": {
     "title": "Ce qu'ils en disent",
-    "items": []
+    "items": [
+        {
+          "quote": "La lampe que Muriel a créée pour notre salon est tout simplement magnifique. Elle a su capter l'ambiance que nous souhaitions et la traduire en une œuvre d'art qui illumine nos soirées. Un talent incroyable !",
+          "author": "Sophie et Marc L.",
+          "company": "Particuliers, Narbonne"
+        },
+        {
+          "quote": "Nous avons fait appel à Muriel pour une sculpture sur-mesure pour notre restaurant. Le résultat a dépassé nos attentes. C'est une pièce maîtresse qui suscite l'admiration de tous nos clients. Professionnalisme et créativité au rendez-vous.",
+          "author": "Julien R.",
+          "company": "Gérant, Le Bistrot d'Olonzac"
+        }
+      ]
   },
   "contact": {
     "title": "Parlons de votre projet",
