@@ -40,6 +40,7 @@ export async function POST(request: Request) {
     await docRef.set(content);
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
+    // C'est l'étape clé pour que les modifications apparaissent immédiatement.
     revalidatePath('/');
     revalidatePath('/admin');
     

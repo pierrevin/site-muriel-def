@@ -25,8 +25,9 @@ export async function getContent() {
   noStore();
 
   if (!db) {
-    console.warn("Firestore n'est pas initialisé. Lecture depuis le fichier local.");
-    return readLocalContent();
+    console.error("CRITIQUE : La connexion à Firestore a échoué. Impossible de récupérer le contenu du site.");
+    // En dernier recours absolu, on retourne un contenu vide pour éviter un crash complet.
+    return getDefaultContent();
   }
 
   try {
@@ -34,30 +35,38 @@ export async function getContent() {
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
-      // Le document existe, on retourne ses données
+      // Le document existe, on retourne ses données. C'est le cas nominal.
       return docSnap.data();
     } else {
-      // Le document n'existe pas. On le crée à partir du fichier local.
-      console.log("Document Firestore non trouvé. Tentative de migration depuis content.json...");
-      const localContent = await readLocalContent();
-      await docRef.set(localContent);
-      console.log("Migration vers Firestore réussie. Le contenu a été sauvegardé.");
-      revalidatePath('/');
-      return localContent;
+      // Le document n'existe pas. C'est probablement le premier lancement.
+      // On le crée à partir du fichier local `content.json`.
+      console.log("Document Firestore non trouvé. Lancement de la migration initiale depuis content.json...");
+      
+      try {
+        const localContent = await readLocalContent();
+        await docRef.set(localContent);
+        console.log("Migration vers Firestore réussie. Le contenu initial a été sauvegardé.");
+        revalidatePath('/'); // On s'assure que la page d'accueil est rafraîchie avec les bonnes données.
+        return localContent;
+      } catch (migrationError) {
+          console.error("ERREUR CRITIQUE lors de la migration du contenu local vers Firestore.", migrationError);
+          return getDefaultContent();
+      }
     }
   } catch (error) {
-    console.error("Erreur critique lors de l'accès à Firestore. Lecture du fichier local de secours.", error);
-    return readLocalContent();
+    console.error("Erreur critique lors de l'accès à Firestore. Impossible de charger le contenu.", error);
+    return getDefaultContent();
   }
 }
 
-// Fonction helper pour lire le fichier local
+// Fonction helper pour lire le fichier local, utilisée uniquement pour la migration.
 async function readLocalContent() {
     try {
         const fileContent = await fs.readFile(contentFilePath, 'utf-8');
         return JSON.parse(fileContent);
     } catch (fileError) {
-        console.error("CRITIQUE: Échec de la lecture du fichier local content.json. Utilisation du contenu par défaut.", fileError);
+        console.error("CRITIQUE: Échec de la lecture du fichier local content.json pour la migration.", fileError);
+        // Si la lecture du fichier échoue, on renvoie le contenu par défaut pour la migration.
         return getDefaultContent();
     }
 }
