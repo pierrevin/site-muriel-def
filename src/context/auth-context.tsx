@@ -10,27 +10,31 @@ interface AuthContextType {
   loading: boolean;
 }
 
-// Set loading to false by default to avoid blocking render
-const AuthContext = createContext<AuthContextType>({ user: null, loading: false });
+// Création du contexte avec une valeur par défaut complète pour éviter les erreurs.
+const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Still true internally to track initial load
-  const auth = getAuth(app);
-
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
+    // getAuth est appelé à l'intérieur du useEffect pour garantir la fraîcheur de l'instance
+    // et éviter les problèmes de cycle de vie.
+    const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
 
+    // La fonction de nettoyage se charge de détacher le listener quand le composant est démonté.
     return () => unsubscribe();
-  }, [auth]);
+  }, []); // Le tableau de dépendances est vide pour que l'effet ne s'exécute qu'une fois.
 
-  // We no longer return a global loader here.
-  // The layout will render immediately, and components that need the user
-  // can check the `loading` state from the context.
   return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    // Ce hook simple consomme le contexte.
+    // La vérification de null n'est plus nécessaire car le contexte a une valeur par défaut.
+    return useContext(AuthContext);
+};
