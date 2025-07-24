@@ -1,21 +1,42 @@
+
 // src/firebase/firebaseAdmin.ts
 import admin from 'firebase-admin';
-import firebaseConfig from './firebaseConfig';
 
 // Ce fichier est destiné à une exécution côté serveur uniquement.
 
-// Initialisation robuste pour tous les environnements (local, Cloud Run, App Hosting, etc.)
-if (!admin.apps.length) {
+// Récupère les credentials depuis les variables d'environnement.
+// C'est la manière sécurisée de le faire sur un serveur.
+const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
+let serviceAccount;
+
+if (serviceAccountString) {
   try {
-    admin.initializeApp({
-      // Utilise les Application Default Credentials (ADC) de Google Cloud,
-      // ou le fichier de credentials si la variable d'environnement GOOGLE_APPLICATION_CREDENTIALS est définie.
-      credential: admin.credential.applicationDefault(),
-      projectId: firebaseConfig.projectId
-    });
-    console.info('Firebase Admin initialisé avec succès.');
+    serviceAccount = JSON.parse(serviceAccountString);
   } catch (e) {
-    console.error('Erreur lors de l\'initialisation de Firebase Admin:', e);
+    console.error('FIREBASE_SERVICE_ACCOUNT: Failed to parse service account JSON.', e);
+  }
+}
+
+
+// Vérifie si l'application Firebase Admin a déjà été initialisée
+// pour éviter les erreurs, notamment lors du rechargement à chaud en développement.
+if (!admin.apps.length) {
+  if (serviceAccount) {
+    try {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+      console.info("Firebase Admin initialisé avec succès via la variable d'environnement.");
+    } catch(e) {
+       console.error("Erreur lors de l'initialisation de Firebase Admin avec le service account:", e);
+    }
+  } else {
+    // Si les credentials ne sont pas disponibles (par exemple, dans un environnement local mal configuré),
+    // on l'indique clairement dans les logs du serveur. L'app ne plantera pas.
+    console.warn(
+      'Firebase Admin SDK: Les credentials du compte de service sont manquants. ' +
+      'Les fonctionnalités Firestore ne seront pas disponibles.'
+    );
   }
 }
 

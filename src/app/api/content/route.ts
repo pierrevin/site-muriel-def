@@ -38,8 +38,6 @@ export async function POST(request: Request) {
     const docRef = db.collection(FIRESTORE_COLLECTION).doc(FIRESTORE_DOC_ID);
     
     // Écrit le contenu dans le document.
-    // .set() sans merge va créer le document s'il n'existe pas ou l'écraser complètement,
-    // ce qui est le comportement souhaité et le plus robuste pour l'éditeur.
     await docRef.set(content);
 
     // Invalide le cache des pages pour forcer un rechargement des nouvelles données.
