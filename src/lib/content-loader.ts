@@ -1,10 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { db } from '@/firebase/firebaseAdmin';
-
-// Pour forcer la revalidation à chaque requête en développement, mais permettre le caching en prod
-// la revalidation se fera via revalidatePath dans l'API.
-export const revalidate = 0;
+import { revalidatePath } from 'next/cache';
 
 const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
 
@@ -23,6 +20,11 @@ const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
 
 export async function getContent() {
+  // En mode développement, on force la revalidation pour voir les changements
+  if (process.env.NODE_ENV === 'development') {
+    revalidatePath('/');
+  }
+
   if (!db) {
     console.warn("Firestore n'est pas initialisé. Lecture depuis le fichier local.");
     return readLocalContent();
