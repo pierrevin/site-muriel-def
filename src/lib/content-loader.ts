@@ -1,11 +1,8 @@
-import fs from 'fs/promises';
-import path from 'path';
 import { db } from '@/firebase/firebaseAdmin';
-import { revalidatePath } from 'next/cache';
 import { unstable_noStore as noStore } from 'next/cache';
 
-
-const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
+const FIRESTORE_DOC_ID = 'main';
+const FIRESTORE_COLLECTION = 'content';
 
 const getDefaultContent = () => ({
   general: { logoUrl: '/logo-placeholder.png' },
@@ -17,16 +14,13 @@ const getDefaultContent = () => ({
   contact: { title: 'Contact', subtitle: 'Description', detailsTitle: 'Coordonnées', formTitle: 'Formulaire', details: { phone: 'N/A', address: 'N/A' } },
 });
 
-// Le nom du document unique dans la collection 'content'
-const FIRESTORE_DOC_ID = 'main';
-const FIRESTORE_COLLECTION = 'content';
 
 export async function getContent() {
+  // Garantit que les données ne sont jamais mises en cache de manière agressive
   noStore();
 
   if (!db) {
-    console.error("CRITIQUE : La connexion à Firestore a échoué. Impossible de récupérer le contenu du site.");
-    // En dernier recours absolu, on retourne un contenu vide pour éviter un crash complet.
+    console.error("CRITIQUE : La connexion à Firestore a échoué. Le contenu par défaut sera retourné.");
     return getDefaultContent();
   }
 
@@ -35,38 +29,16 @@ export async function getContent() {
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
-      // Le document existe, on retourne ses données. C'est le cas nominal.
+      // Le cas nominal : le document existe, on retourne ses données.
       return docSnap.data();
     } else {
-      // Le document n'existe pas. C'est probablement le premier lancement.
-      // On le crée à partir du fichier local `content.json`.
-      console.log("Document Firestore non trouvé. Lancement de la migration initiale depuis content.json...");
-      
-      try {
-        const localContent = await readLocalContent();
-        await docRef.set(localContent);
-        console.log("Migration vers Firestore réussie. Le contenu initial a été sauvegardé.");
-        revalidatePath('/'); // On s'assure que la page d'accueil est rafraîchie avec les bonnes données.
-        return localContent;
-      } catch (migrationError) {
-          console.error("ERREUR CRITIQUE lors de la migration du contenu local vers Firestore.", migrationError);
-          return getDefaultContent();
-      }
+      // Le document n'a pas été trouvé. Cela signifie que la migration manuelle n'a pas été faite.
+      // On retourne un contenu par défaut pour éviter de crasher le site.
+      console.warn(`Le document 'main' n'a pas été trouvé dans la collection 'content'. Veuillez l'importer manuellement dans Firestore.`);
+      return getDefaultContent();
     }
   } catch (error) {
     console.error("Erreur critique lors de l'accès à Firestore. Impossible de charger le contenu.", error);
     return getDefaultContent();
   }
-}
-
-// Fonction helper pour lire le fichier local, utilisée uniquement pour la migration.
-async function readLocalContent() {
-    try {
-        const fileContent = await fs.readFile(contentFilePath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (fileError) {
-        console.error("CRITIQUE: Échec de la lecture du fichier local content.json pour la migration.", fileError);
-        // Si la lecture du fichier échoue, on renvoie le contenu par défaut pour la migration.
-        return getDefaultContent();
-    }
 }
