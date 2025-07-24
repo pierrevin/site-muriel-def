@@ -13,37 +13,15 @@ import { useToast } from '@/hooks/use-toast';
 import { LoaderCircle, LogIn } from 'lucide-react';
 import Image from 'next/image';
 
-// On garde cette page en 'use client' car elle gère l'état du formulaire et les interactions.
-// Cependant, on ne peut pas charger les données du fichier directement ici comme sur une page serveur.
-// Une solution simple est de hardcoder le chemin si on veut éviter de faire un appel API juste pour le logo.
-// Mais comme le logo est déjà dans le storage, on va plutôt utiliser une url statique temporaire ou
-// attendre une version plus avancée. Pour l'instant, on va chercher le logo côté client.
-// NOTE: This approach is not ideal, a better way would be to fetch this from an API route or pass it as props if the layout allowed.
-// For now, to solve the immediate problem, this will work.
-
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [logoUrl, setLogoUrl] = useState('/logo-dark.png'); // Fallback logo
+  // Utilisation d'un logo de secours pour éviter l'appel fetch problématique
+  const logoUrl = "/logo-dark.png"; 
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
-
-  useEffect(() => {
-    // We fetch the content on the client side to get the logo
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.general?.logoUrl) {
-          setLogoUrl(data.general.logoUrl);
-        }
-      })
-      .catch(err => {
-        console.error("Could not fetch logo for login page:", err);
-      });
-  }, []);
-
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,10 +30,9 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/admin');
     } catch (error: any) {
-        console.error("Firebase Login Error:", error); // Log complet pour le débogage
+        console.error("Firebase Login Error:", error); 
         let errorMessage = "Une erreur est survenue. Veuillez réessayer.";
         
-        // Analyse du code d'erreur Firebase pour un message plus précis
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             errorMessage = 'Email ou mot de passe incorrect.';
         } else if (error.code === 'auth/api-key-not-valid') {
@@ -77,7 +54,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
             <div className="mx-auto h-20 w-48 relative mb-4">
                <Image 
-                    src={logoUrl} 
+                    src="https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff"
                     alt="Logo Les Trucs de Mumu" 
                     fill
                     sizes="192px"
