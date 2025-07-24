@@ -27,9 +27,7 @@
   },
   "about": {
     "title": "L'art du métal, la magie du verre",
-    "paragraph1": "Je suis Muriel Fauthoux, artisan créatrice passionnée par la transformation de la matière brute en objets d'art qui captent la lumière et racontent une histoire. Mon univers est fait de métal sculpté, de vitrail coloré et de curiosité sans cesse renouvelée.",
-    "paragraph2": "Chaque pièce qui naît dans mon atelier est le fruit d'un dialogue entre le métal, que je tords, soude et façonne, et le verre, que je choisis pour ses couleurs et ses textures uniques. Luminaires, sculptures, objets décoratifs... mes créations sont des invitations à voir le monde autrement.",
-    "paragraph3": "Plus qu'une simple décoration, je cherche à créer des émotions, des atmosphères. Une lumière qui danse sur un mur, une sculpture qui dialogue avec votre espace... C'est cette petite étincelle de magie que je souhaite apporter dans votre quotidien.",
+    "text": "Je suis Muriel Fauthoux, artisan créatrice passionnée par la transformation de la matière brute en objets d'art qui captent la lumière et racontent une histoire. Mon univers est fait de métal sculpté, de vitrail coloré et de curiosité sans cesse renouvelée.\n\nChaque pièce qui naît dans mon atelier est le fruit d'un dialogue entre le métal, que je tords, soude et façonne, et le verre, que je choisis pour ses couleurs et ses textures uniques. Luminaires, sculptures, objets décoratifs... mes créations sont des invitations à voir le monde autrement.\n\nPlus qu'une simple décoration, je cherche à créer des émotions, des atmosphères. Une lumière qui danse sur un mur, une sculpture qui dialogue avec votre espace... C'est cette petite étincelle de magie que je souhaite apporter dans votre quotidien.",
     "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2F1752737237943-mumu-portrait.jpg?alt=media&token=b7189178-5a4e-4f36-9a25-a1c2269a8459"
   },
   "creations": {

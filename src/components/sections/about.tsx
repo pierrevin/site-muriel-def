@@ -37,9 +37,7 @@ const AboutSection = ({ content }: { content: any }) => {
             <h2 className="font-headline text-4xl md:text-5xl font-bold text-foreground">
               {content.title}
             </h2>
-            <p className="text-foreground/80">{content.paragraph1}</p>
-            <p className="text-foreground/80">{content.paragraph2}</p>
-            <p className="text-foreground/80">{content.paragraph3}</p>
+            <p className="text-foreground/80 whitespace-pre-line">{content.text}</p>
             <div className="pt-4">
                 <Button asChild size="lg" variant="secondary">
                     <Link href="#contact">Discutons de votre projet</Link>

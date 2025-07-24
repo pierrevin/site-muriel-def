@@ -400,16 +400,8 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
                       <Input id="about-title" value={content.about.title} onChange={(e) => handleFieldChange('about', 'title', e.target.value)} />
                   </div>
                   <div>
-                      <Label htmlFor="about-p1">Paragraphe 1</Label>
-                      <Textarea id="about-p1" value={content.about.paragraph1} onChange={(e) => handleFieldChange('about', 'paragraph1', e.target.value)} />
-                  </div>
-                  <div>
-                      <Label htmlFor="about-p2">Paragraphe 2</Label>
-                      <Textarea id="about-p2" value={content.about.paragraph2} onChange={(e) => handleFieldChange('about', 'paragraph2', e.target.value)} />
-                  </div>
-                  <div>
-                      <Label htmlFor="about-p3">Paragraphe 3</Label>
-                      <Textarea id="about-p3" value={content.about.paragraph3} onChange={(e) => handleFieldChange('about', 'paragraph3', e.target.value)} />
+                      <Label htmlFor="about-text">Texte</Label>
+                      <Textarea id="about-text" value={content.about.text} onChange={(e) => handleFieldChange('about', 'text', e.target.value)} rows={10} />
                   </div>
                   <div>
                       <Label>Image de la section (format 4/5)</Label>
