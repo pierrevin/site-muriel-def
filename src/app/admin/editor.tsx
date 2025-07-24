@@ -166,7 +166,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
       toast({
         variant: 'destructive',
         title: 'Erreur',
-        description: 'La sauvegarde a échoué. Veuillez réessayer.',
+        description: result?.message || 'La sauvegarde a échoué. Veuillez réessayer.',
       });
     }
   };
