@@ -5,23 +5,19 @@ import initialContent from '@/data/content.json';
 const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
 
-const getDefaultContent = () => ({
-  general: { logoUrl: '/logo-placeholder.png' },
-  hero: { title: 'Titre par défaut', subtitle: 'Sous-titre', imageUrl: 'https://placehold.co/1920x1080.png' },
-  features: { title: 'Engagements', subtitle: 'Description', items: [] },
-  about: { title: 'À propos', text: 'Texte de présentation.', imageUrl: 'https://placehold.co/800x1000.png' },
-  creations: { title: 'Créations', subtitle: 'Description', items: [], categories: [] },
-  testimonials: { title: 'Témoignages', items: [] },
-  contact: { title: 'Contact', subtitle: 'Description', detailsTitle: 'Coordonnées', formTitle: 'Formulaire', details: { phone: 'N/A', address: 'N/A' } },
-});
+// Structure par défaut robuste pour éviter les crashs si des champs sont manquants.
+const getDefaultContent = () => JSON.parse(JSON.stringify(initialContent));
 
 
 export async function getContent() {
   noStore();
 
+  const defaults = getDefaultContent();
+
   if (!db) {
-    console.error("CRITICAL: Firestore connection failed. Returning default content.");
-    return getDefaultContent();
+    console.error("CRITICAL: Firestore connection failed. Returning initial file content.");
+    // Retourne le contenu du fichier JSON si la base de données est indisponible.
+    return defaults;
   }
 
   try {
@@ -29,14 +25,22 @@ export async function getContent() {
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
-      return docSnap.data();
+      const firestoreData = docSnap.data();
+      // Fusionne les données de Firestore avec les données par défaut.
+      // Cela garantit que si un champ de premier niveau (ex: "creations") est manquant
+      // dans Firestore, la structure par défaut est utilisée, évitant un crash.
+      return {
+        ...defaults,
+        ...firestoreData,
+      };
     } else {
-      console.warn(`Document 'main' not found in collection 'content'. Populating with initial data from content.json.`);
-      await docRef.set(initialContent);
-      return initialContent;
+      console.warn(`Document '${FIRESTORE_DOC_ID}' not found in collection '${FIRESTORE_COLLECTION}'. Populating with initial data from content.json.`);
+      // Si le document n'existe pas du tout, on le crée avec le contenu complet du fichier.
+      await docRef.set(defaults);
+      return defaults;
     }
   } catch (error) {
-    console.error("Critical error accessing Firestore. Returning default content.", error);
-    return getDefaultContent();
+    console.error("Critical error accessing Firestore. Returning initial file content.", error);
+    return defaults;
   }
 }
