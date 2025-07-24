@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { LoaderCircle, Save, PlusCircle, Trash2, CheckCircle, GripVertical } from 'lucide-react';
 import { ImageUploader } from '@/components/image-uploader';
 import { CreatableSelect } from '@/components/ui/creatable-select';
+import { useAuth } from '@/context/auth-context';
 import {
   DndContext,
   closestCenter,
@@ -30,10 +31,13 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-async function saveContent(content: any) {
+async function saveContent(content: any, token: string) {
     const response = await fetch('/api/content', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(content),
     });
     return response.json();
@@ -119,6 +123,7 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   const [initialContent, setInitialContent] = useState(initialContentProp);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const { toast } = useToast();
+  const { user } = useAuth();
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -143,6 +148,15 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
   }, [initialContentProp]);
 
   const handleSave = async () => {
+    if (!user) {
+        toast({
+            variant: 'destructive',
+            title: 'Erreur',
+            description: 'Vous devez être connecté pour sauvegarder.',
+        });
+        return;
+    }
+    
     setSaveStatus("saving");
     
     const updatedContent = JSON.parse(JSON.stringify(content));
@@ -152,22 +166,30 @@ export function AdminEditor({ initialContent: initialContentProp }: { initialCon
       updatedContent.creations.categories = usedCategories.filter(Boolean);
     }
     
-    const result = await saveContent(updatedContent);
+    try {
+      const token = await user.getIdToken();
+      const result = await saveContent(updatedContent, token);
 
-    if (result?.success) {
-      // The API route revalidates the path, so Next.js will refetch the props.
-      // We manually update the local state to provide a snappier feel
-      // and ensure the "saveStatus" useEffect has the correct comparison values.
-      setContent(updatedContent);
-      setInitialContent(updatedContent);
-      setSaveStatus("saved");
-    } else {
-      setSaveStatus("unsaved");
-      toast({
-        variant: 'destructive',
-        title: 'Erreur',
-        description: result?.message || 'La sauvegarde a échoué. Veuillez réessayer.',
-      });
+      if (result?.success) {
+        setContent(updatedContent);
+        setInitialContent(updatedContent);
+        setSaveStatus("saved");
+      } else {
+        setSaveStatus("unsaved");
+        toast({
+          variant: 'destructive',
+          title: 'Erreur',
+          description: result?.message || 'La sauvegarde a échoué. Veuillez réessayer.',
+        });
+      }
+    } catch (error) {
+        console.error("Erreur lors de la sauvegarde :", error);
+        setSaveStatus("unsaved");
+        toast({
+            variant: 'destructive',
+            title: 'Erreur',
+            description: "Une erreur inattendue est survenue lors de l'obtention du jeton d'authentification.",
+        });
     }
   };
 
