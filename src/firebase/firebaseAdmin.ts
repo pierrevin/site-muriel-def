@@ -39,9 +39,8 @@ if (!admin.apps.length) {
   }
 }
 
-// Initialise les services nécessaires.
-const db = null; // La base de données n'est plus utilisée pour le contenu.
+// Pour le système basé sur fichier, seul 'auth' est nécessaire.
 const auth = admin.apps.length ? admin.auth() : null;
 
-// Exporte les services pour qu'ils soient utilisés par d'autres parties du serveur.
-export { admin, db, auth };
+// Exporte uniquement les services nécessaires.
+export { admin, auth };

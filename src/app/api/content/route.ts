@@ -5,14 +5,14 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { auth as adminAuth } from '@/firebase/firebaseAdmin';
+import { auth } from '@/firebase/firebaseAdmin';
 
 const CONTENT_FILE = 'src/data/content.json';
 
 // POST: Sauvegarde le contenu dans le fichier JSON local.
 export async function POST(request: Request) {
   // 1. Vérification de la disponibilité du service d'authentification
-  if (!adminAuth) {
+  if (!auth) {
     console.error("Échec de la sauvegarde : le service d'authentification Firebase Admin n'est pas disponible.");
     return new NextResponse(
       JSON.stringify({ success: false, message: "Erreur serveur : le service d'authentification est indisponible." }),
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   const idToken = authorization.split('Bearer ')[1];
 
   try {
-    await adminAuth.verifyIdToken(idToken);
+    await auth.verifyIdToken(idToken);
   } catch (error) {
     console.error("Échec de la validation du jeton :", error);
     return new NextResponse(JSON.stringify({ success: false, message: 'Non autorisé : Jeton invalide.' }), { status: 403 });
@@ -58,9 +58,7 @@ export async function POST(request: Request) {
   }
 }
 
-// GET n'est plus nécessaire car le contenu est chargé directement par le serveur.
-// On peut le laisser pour du débogage si besoin, ou le supprimer.
-// Pour la propreté, nous allons le laisser mais retourner une méthode non autorisée.
+// GET n'est pas nécessaire car le contenu est chargé directement par le serveur.
 export async function GET(request: Request) {
     return new NextResponse(
         JSON.stringify({ message: "Méthode non autorisée" }),
