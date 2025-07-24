@@ -1,6 +1,3 @@
-
-'use server';
-
 import { unstable_noStore as noStore } from 'next/cache';
 import fs from 'fs/promises';
 import path from 'path';
