@@ -1,10 +1,9 @@
-
 {
   "general": {
     "logoUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1752737122228-Logo_LTDM_V2%20jaune.png?alt=media&token=52cf14b4-f786-4f90-a790-39458b13f8ff"
   },
   "hero": {
-    "title": "Les Trucs de Mumu",
+    "title": "Les Trucs de Mumu bis",
     "subtitle": "Créations artisanales uniques en métal et vitrail",
     "imageUrl": "https://firebasestorage.googleapis.com/v0/b/les-trucs-de-mumu-g9rzm.firebasestorage.app/o/uploads%2FJmt1vFlq3UeVzjvpiTwBJ56dWu93%2F1753337494916-Elmer0001.webp?alt=media&token=94d370e2-4f70-448c-acb7-0b2360220a3d"
   },
@@ -69,17 +68,17 @@
   "testimonials": {
     "title": "Ce qu'ils en disent",
     "items": [
-        {
-          "quote": "La lampe que Muriel a créée pour notre salon est tout simplement magnifique. Elle a su capter l'ambiance que nous souhaitions et la traduire en une œuvre d'art qui illumine nos soirées. Un talent incroyable !",
-          "author": "Sophie et Marc L.",
-          "company": "Particuliers, Narbonne"
-        },
-        {
-          "quote": "Nous avons fait appel à Muriel pour une sculpture sur-mesure pour notre restaurant. Le résultat a dépassé nos attentes. C'est une pièce maîtresse qui suscite l'admiration de tous nos clients. Professionnalisme et créativité au rendez-vous.",
-          "author": "Julien R.",
-          "company": "Gérant, Le Bistrot d'Olonzac"
-        }
-      ]
+      {
+        "quote": "La lampe que Muriel a créée pour notre salon est tout simplement magnifique. Elle a su capter l'ambiance que nous souhaitions et la traduire en une œuvre d'art qui illumine nos soirées. Un talent incroyable !",
+        "author": "Sophie et Marc L.",
+        "company": "Particuliers, Narbonne"
+      },
+      {
+        "quote": "Nous avons fait appel à Muriel pour une sculpture sur-mesure pour notre restaurant. Le résultat a dépassé nos attentes. C'est une pièce maîtresse qui suscite l'admiration de tous nos clients. Professionnalisme et créativité au rendez-vous.",
+        "author": "Julien R.",
+        "company": "Gérant, Le Bistrot d'Olonzac"
+      }
+    ]
   },
   "contact": {
     "title": "Parlons de votre projet",

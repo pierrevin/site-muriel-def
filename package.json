@@ -9,9 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "deploy": "firebase deploy --only storage && git add . && (git commit -m 'Mise à jour du site' --allow-empty-message --no-edit || true) && git pull --rebase",
+    "deploy": "git add . && (git commit -m 'Mise à jour du site' --allow-empty-message --no-edit || true) && firebase deploy",
     "save-version": "git add . && git commit -m 'Sauvegarde de version stable' --allow-empty-message && read -p 'Entrez un nom pour cette version (ex: v1.0.0): ' TAG && git tag -a \"$TAG\" -m \"Version $TAG\" && git push origin \"$TAG\"",
-    "restore-version": "git fetch --tags && read -p 'Entrez le nom exact de la version à restaurer (ex: v1.0.0): ' TAG && git checkout \"$TAG\" && git checkout -b temp-restore-\"$TAG\" && git checkout master && git reset --hard temp-restore-\"$TAG\" && git branch -D temp-restore-\"$TAG\" && read -p \"PREPARATION TERMINEE. La version '$TAG' est prête. Voulez-vous vraiment remplacer la version en ligne par cette sauvegarde ? (o/n) \" -n 1 -r && echo && if [[ $REPLY =~ ^[Oo]$ ]]; then git push --force origin master; else echo 'Restauration annulée.'; fi"
+    "restore-version": "git fetch --tags && git tag --sort=-creatordate --format='%(creatordate:short) -> %(refname:strip=2)' && echo '---' && read -p 'Entrez le nom de la version à restaurer: ' TAG && git checkout \"$TAG\""
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
