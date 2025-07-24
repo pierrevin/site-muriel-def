@@ -1,6 +1,11 @@
 import fs from 'fs/promises';
 import path from 'path';
 
+// Force Next.js à ré-exécuter cette fonction à chaque requête,
+// désactivant ainsi le cache de données qui empêchait la synchronisation
+// dans l'aperçu de Firebase Studio.
+export const dynamic = 'force-dynamic';
+
 const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
 
 const getDefaultContent = () => ({
