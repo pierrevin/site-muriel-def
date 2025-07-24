@@ -2,6 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { db } from '@/firebase/firebaseAdmin';
 import { revalidatePath } from 'next/cache';
+import { unstable_noStore as noStore } from 'next/cache';
+
 
 const contentFilePath = path.join(process.cwd(), 'src', 'data', 'content.json');
 
@@ -20,10 +22,7 @@ const FIRESTORE_DOC_ID = 'main';
 const FIRESTORE_COLLECTION = 'content';
 
 export async function getContent() {
-  // En mode développement, on force la revalidation pour voir les changements
-  if (process.env.NODE_ENV === 'development') {
-    revalidatePath('/');
-  }
+  noStore();
 
   if (!db) {
     console.warn("Firestore n'est pas initialisé. Lecture depuis le fichier local.");
@@ -43,6 +42,7 @@ export async function getContent() {
       const localContent = await readLocalContent();
       await docRef.set(localContent);
       console.log("Migration vers Firestore réussie. Le contenu a été sauvegardé.");
+      revalidatePath('/');
       return localContent;
     }
   } catch (error) {
